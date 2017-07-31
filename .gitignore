@@ -4,3 +4,4 @@ migrations/*.pyc
 GoogleNews-vectors-negative300.bin
 seeds/*.pyc
 config/database.py
+env/*
