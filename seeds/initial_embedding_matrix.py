@@ -8,9 +8,9 @@ class InitialEmbeddingMatrix(Seeder):
 	def run(self):
 		mtx = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
 		for key in mtx.vocab.keys():
-			if not em.where("word", key.encode("UTF-8")).first():
+			if not em.where("word", key).first():
 				em.insert({
-					'word': key.encode("UTF-8"),
+					'word': key,
 					'vector': self.convert2array(mtx.wv[key])
 				})
 			print("Key: " + key + " Done!")
