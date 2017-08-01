@@ -1,1 +1,1 @@
-from em_matrix import EmMatrix
+from .em_matrix import EmMatrix
