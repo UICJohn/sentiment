@@ -1,2 +1,2 @@
 from config import database
-# from models import EmMatrix, TrainningSet
+from models import EmMatrix, TrainningSet, db_conn

@@ -1,4 +1,4 @@
-from application import db
+from application import db_conn
 
 if __name__ == '__main__':
-    db.cli.run()
+    db_conn.cli.run()

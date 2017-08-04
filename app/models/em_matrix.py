@@ -1,5 +1,3 @@
-from orator import Model
-# from application import db
-
-class EmMatrix(db.Model):
+from .base import Base
+class EmMatrix(Base):
 	__casts__ = {'vector': 'array'}
