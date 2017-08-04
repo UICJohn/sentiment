@@ -1,6 +1,6 @@
 from orator import Model
-from app import db
 from orator.orm import has_one
+# from application import db
 
 class TrainningSet(db.Model):
 	@has_one('foreign_key', 'set_id')
