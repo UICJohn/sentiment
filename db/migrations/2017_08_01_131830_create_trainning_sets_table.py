@@ -10,7 +10,6 @@ class CreateTrainningSetsTable(Migration):
       table.boolean("positive")
       table.text('word_ids').nullable()
       table.index('positive')
-      table.index('word_ids')
       table.timestamps()
 
   def down(self):
