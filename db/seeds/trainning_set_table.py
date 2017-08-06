@@ -19,8 +19,8 @@ class TrainningSetTable(Seeder):
 		for fname in negativeFiles:
 			self.loadFile(fname, False)
 	
-	def word2Id(self, words, maxSize):
-		ids = [0] * maxVectorSize
+	def word2Id(self, words, size):
+		ids = [0] * size
 		for i, word in enumerate(words.split(" ")):
 			word = em.where("word", word).first()
 			if(word):
@@ -35,7 +35,7 @@ class TrainningSetTable(Seeder):
 			for line in f:
 				words = self.stringClean(line)
 				if not ts.where("words", words).first():
-					ts.insert({ "words": words, "positive": positive, "word_ids": self.word2Id(words)})
+					ts.insert({ "words": words, "positive": positive, "word_ids": self.word2Id(words, maxVectorSize)})
 					print("Trainning Set Count : " + str(ts.count()))
 
 	def stringClean(self, string):
