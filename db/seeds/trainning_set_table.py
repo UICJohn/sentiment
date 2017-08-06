@@ -26,7 +26,7 @@ class TrainningSetTable(Seeder):
 			if(word):
 				ids[i] = word.id
 			else:
-				ids(i) = 4000000
+				ids[i] = 4000000
 		return ids
 		
 
