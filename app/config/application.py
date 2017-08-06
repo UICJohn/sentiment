@@ -6,4 +6,4 @@ DEBUG = True
 
 batchSize = 24
 
-maxVectorSize = 250
+maxVectorSize = 500

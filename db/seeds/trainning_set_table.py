@@ -9,7 +9,6 @@ from app.config import maxVectorSize
 import pdb
 
 class TrainningSetTable(Seeder):
-
 	def run(self):
 		dataset_path = "aclImdb/train/"
 		positiveFiles = [dataset_path + 'pos/' + f for f in listdir(dataset_path + "pos/") if isfile(join(dataset_path + 'pos/', f))]
