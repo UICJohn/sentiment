@@ -1,2 +1,2 @@
-from app import config
-from app import models
+from .app import config
+from .app import models
