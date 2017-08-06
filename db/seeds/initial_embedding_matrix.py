@@ -1,5 +1,5 @@
 from orator.seeds import Seeder
-from models import EmMatrix as em
+from app.models import EmMatrix as em
 import os
 import gensim
 

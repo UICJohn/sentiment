@@ -3,8 +3,9 @@ from os import listdir
 from os.path import isfile, join
 import numpy as np
 import re
-from models import TrainningSet as ts
-
+from app.models import TrainningSet as ts
+from app.models import EmMatrix as em
+import pdb
 
 class TrainningSetTable(Seeder):
 
@@ -17,12 +18,23 @@ class TrainningSetTable(Seeder):
 		for fname in negativeFiles:
 			self.loadFile(fname, False)
 	
+	def word2Id(self, words):
+		ids = []
+		for word in words.split(" "):
+			word = em.where("word", word).first()
+			if(word):
+				ids.append(word.id)
+			else:
+				ids.append(4000000)
+		return ids
+		
+
 	def loadFile(self, fname, positive):
 		with open(fname) as f:
 			for line in f:
 				words = self.stringClean(line)
 				if not ts.where("words", words).first():
-					ts.insert({ "words": words, "positive": positive})
+					ts.insert({ "words": words, "positive": positive, "word_ids": self.word2Id(words)})
 					print("Trainning Set Count : " + str(ts.count()))
 
 	def stringClean(self, string):
