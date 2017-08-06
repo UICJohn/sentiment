@@ -4,4 +4,6 @@ ORATOR_DATABASES = database
 
 DEBUG = True
 
-batch_size = 24
+batchSize = 24
+
+maxVectorSize = 250

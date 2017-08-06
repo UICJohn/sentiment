@@ -5,6 +5,7 @@ import numpy as np
 import re
 from app.models import TrainningSet as ts
 from app.models import EmMatrix as em
+from app.config import maxVectorSize
 import pdb
 
 class TrainningSetTable(Seeder):
@@ -18,14 +19,14 @@ class TrainningSetTable(Seeder):
 		for fname in negativeFiles:
 			self.loadFile(fname, False)
 	
-	def word2Id(self, words):
-		ids = []
-		for word in words.split(" "):
+	def word2Id(self, words, maxSize):
+		ids = [0] * maxVectorSize
+		for i, word in enumerate(words.split(" ")):
 			word = em.where("word", word).first()
 			if(word):
-				ids.append(word.id)
+				ids[i] = word.id
 			else:
-				ids.append(4000000)
+				ids(i) = 4000000
 		return ids
 		
 
