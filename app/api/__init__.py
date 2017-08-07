@@ -1,1 +1,2 @@
-from .train import Train
+from .trainning_set_controller import TrainningSetController
+from .trainning_task_controller import TrainningTaskController
