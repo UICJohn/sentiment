@@ -39,5 +39,5 @@ class TrainningSetTable(Seeder):
 
 	def stringClean(self, string):
 		special_chars = re.compile("[^A-Za-z0-9 ]+")
-		string = string.lower().replace("<br />", " ")
+		string = string.lower().replace("<br />", "")
 		return re.sub(special_chars, "", string)
