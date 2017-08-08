@@ -3,12 +3,11 @@ from os import listdir
 from os.path import isfile, join
 import numpy as np
 import re
-from app.models import TrainningSet as ts
+from app.models import TrainingSet as ts
 from app.models import EmMatrix as em
 from app.config import maxVectorSize
-import pdb
 
-class TrainningSetTable(Seeder):
+class TrainingSetTable(Seeder):
 	def run(self):
 		dataset_path = "aclImdb/train/"
 		positiveFiles = [dataset_path + 'pos/' + f for f in listdir(dataset_path + "pos/") if isfile(join(dataset_path + 'pos/', f))]

@@ -1,2 +1,2 @@
 from .application import *
-from celery import *
+from .celery import *

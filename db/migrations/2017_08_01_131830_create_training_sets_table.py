@@ -1,10 +1,10 @@
 from orator.migrations import Migration
 
 
-class CreateTrainningSetsTable(Migration):
+class CreateTrainingSetsTable(Migration):
 
   def up(self):
-    with self.schema.create('trainning_sets') as table:
+    with self.schema.create('training_sets') as table:
       table.increments('id')
       table.text('words')
       table.boolean("positive")
