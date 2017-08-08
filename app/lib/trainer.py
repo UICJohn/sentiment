@@ -1,4 +1,4 @@
-from ..models import TrainingSet, db_conn
+from ..models import TrainingSet, db_conn, EmMatrix
 from .base import Base
 import pdb
 

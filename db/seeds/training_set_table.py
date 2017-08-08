@@ -5,7 +5,6 @@ import numpy as np
 import re
 from app.models import TrainingSet as ts
 from app.models import EmMatrix as em
-from app.config import maxVectorSize
 
 class TrainingSetTable(Seeder):
 	def run(self):
