@@ -1,3 +1,3 @@
 from .config import database
 from .models import EmMatrix, TrainingSet, db_conn
-from .lib import Trainer, Cache
+from .lib import Trainer

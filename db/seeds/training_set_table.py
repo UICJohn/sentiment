@@ -3,9 +3,9 @@ from os import listdir
 from os.path import isfile, join
 import numpy as np
 import re
+import json
 from app.models import TrainingSet as ts
 from app.models import EmMatrix as em
-import json
 
 class TrainingSetTable(Seeder):
 	def run(self):
@@ -25,6 +25,7 @@ class TrainingSetTable(Seeder):
 				ids.append(word.id)
 			else:
 				ids.append(4000000)
+		Cache.set("max_vect_size", len(ids), 3600)
 		return json.dumps(ids)
 		
 

@@ -2,7 +2,6 @@ from flask_restful import Resource
 from ..models import TrainingSet
 from ..models import db_conn
 from ..config import batchSize
-
 class TrainingSetController(Resource):
   def get(self):
   	set_info = {

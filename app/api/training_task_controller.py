@@ -11,5 +11,5 @@ class TrainingTaskController(Resource):
 
 	def post(self):
 		# train.delay(batchSize)
-		trainer = Trainer(batchSize)
-		return {"STATUS": "REQUEST HAS BEEN ADD TO QUEUE"}
+		label = Trainer(batchSize)
+		return {"STATUS": label}

@@ -5,7 +5,6 @@ import gensim
 import json
 
 class InitialEmbeddingMatrix(Seeder):
-
 	def run(self):
 		mtx = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
 		for key in mtx.vocab.keys():
