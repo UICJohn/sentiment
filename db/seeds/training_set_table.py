@@ -5,6 +5,7 @@ import numpy as np
 import re
 from app.models import TrainingSet as ts
 from app.models import EmMatrix as em
+import json
 
 class TrainingSetTable(Seeder):
 	def run(self):
@@ -24,7 +25,7 @@ class TrainingSetTable(Seeder):
 				ids.append(word.id)
 			else:
 				ids.append(4000000)
-		return ids
+		return json.dumps(ids)
 		
 
 	def loadFile(self, fname, positive):

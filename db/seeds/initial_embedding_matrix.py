@@ -2,6 +2,7 @@ from orator.seeds import Seeder
 from app.models import EmMatrix as em
 import os
 import gensim
+import json
 
 class InitialEmbeddingMatrix(Seeder):
 
@@ -19,4 +20,4 @@ class InitialEmbeddingMatrix(Seeder):
 		arr = []
 		for num in np_array:
 			arr.append(num.item())
-		return arr
+		return json.dumps(arr)

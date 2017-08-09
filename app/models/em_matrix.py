@@ -1,3 +1,5 @@
 from .base import Base
 class EmMatrix(Base):
-	__casts__ = {'vector': 'array'}
+	__casts__  = {
+		'vector': 'list'
+	}

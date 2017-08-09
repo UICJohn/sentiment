@@ -13,6 +13,6 @@ api = Api(app)
 db_conn.init_app(app)
 
 api.add_resource(TrainingSetController, '/')
-api.add_resource(TrainingTaskController, '/trainning')
+api.add_resource(TrainingTaskController, '/training')
 if __name__ == '__main__':
     app.run()
