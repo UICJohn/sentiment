@@ -9,7 +9,6 @@ class CreateEmMatrixTable(Migration):
             table.string('word')
             table.text('vector')
             table.index('word')
-            table.index('vector')
             table.timestamps()
 
     def down(self):
