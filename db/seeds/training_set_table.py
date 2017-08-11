@@ -25,7 +25,6 @@ class TrainingSetTable(Seeder):
 				ids.append(word.id)
 			else:
 				ids.append(4000000)
-		Cache.set("max_vect_size", len(ids), 3600)
 		return json.dumps(ids)
 		
 
