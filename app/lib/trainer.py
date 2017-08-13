@@ -14,7 +14,4 @@ class Trainer(Base):
 		setsCount = TrainingSet.where("trained", False).count()
 		for batch in range(0, setsCount/batchSize):
 			training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, batch)
-			for training_set in training_sets:
-				#TODO
-				# Function to look up embedding matrix
-				
+			# for training_set in training_sets:
