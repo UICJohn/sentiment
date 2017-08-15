@@ -1,6 +1,6 @@
 from flask_restful import Resource
-from sentiment_task import train
-from ..lib import Trainer
+from sentiment_task import create_batch
+from ..lib import Batch
 from ..config import batchSize
 class TrainingTaskController(Resource):
 	def get(self):
@@ -11,5 +11,5 @@ class TrainingTaskController(Resource):
 
 	def post(self):
 		# train.delay(batchSize)
-		label = Trainer(batchSize)
-		return {"STATUS": label}
+		Batch.store()
+		return {"STATUS": "DONE"}
