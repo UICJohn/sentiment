@@ -8,3 +8,5 @@ app/config/celery.py
 app/config/cache.py
 env/*
 aclImdb/*
+.DS_Store
+app/.DS_Store
