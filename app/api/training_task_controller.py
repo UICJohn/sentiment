@@ -10,6 +10,6 @@ class TrainingTaskController(Resource):
 		return task_info
 
 	def post(self):
-		# train.delay(batchSize)
-		Batch.store()
+		# create_batch.delay(1)
+		Batch.enqueue()
 		return {"STATUS": "DONE"}
