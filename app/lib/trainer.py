@@ -1,4 +1,4 @@
-from ..models import TrainingSet, db_conn, EmMatrix
+from ..models import TrainingSet, EmMatrix
 from .base import Base
 
 class Trainer(Base):

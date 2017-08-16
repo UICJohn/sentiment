@@ -1,6 +1,3 @@
-from flask_orator import Orator, jsonify
-
-db_conn = Orator()
-
+from ..config import db_conn
 class Base(db_conn.Model):
 	pass

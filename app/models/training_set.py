@@ -1,4 +1,4 @@
-from .base import Base, db_conn
+from .base import Base
 from ..config import redis
 class TrainingSet(Base):
   __casts__={

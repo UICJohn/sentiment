@@ -1,4 +1,4 @@
-from ..models import TrainingSet, db_conn, EmMatrix
+from ..models import TrainingSet, EmMatrix
 from .base import Base
 from app.config import redis, batchSize, maxBatchCount
 import pdb, json
@@ -15,7 +15,6 @@ class Batch(Base):
       if cls.can_batch():
         batch_index = cls.__current_batch()
         redis.forever(str(batch_index), json.dumps(batch))
-        pdb.set_trace()
         redis.increment('batch_count')
 
   @classmethod

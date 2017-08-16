@@ -1,7 +1,6 @@
 from flask_restful import Resource
 from ..models import TrainingSet
-from ..models import db_conn
-from ..config import batchSize, redis
+from ..config import batchSize, redis, db_conn
 class TrainingSetController(Resource):
   def get(self):
     if redis.has('max_word_length'):
