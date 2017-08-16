@@ -14,14 +14,16 @@ class Batch(Base):
       batch = cls.__vector2matrix(training_sets, maxVectorSize)
       if cls.can_batch():
         batch_index = cls.__current_batch()
-        redis.forever('batch-'+str(batch_index), json.dumps(batch))
-        redis.increment('batch_count', 1)
+        redis.forever(str(batch_index), json.dumps(batch))
+        pdb.set_trace()
+        redis.increment('batch_count')
 
   @classmethod
   def dequeue(cls):
     batch_index = cls.__current_batch()
-    batch = redis.get('batch-'+str(batch_index))
-    redis.remove('batch-'+str(batch_index))
+    batch = redis.get(str(batch_index))
+    redis.remove(str(batch_index))
+    redis.decrement('batch_count')
     return json.loads(batch)
 
   @classmethod
