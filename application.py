@@ -15,6 +15,4 @@ db_conn.init_app(app)
 api.add_resource(TrainingSetController, '/')
 api.add_resource(TrainingTaskController, '/training')
 if __name__ == '__main__':
-  if not(redis.get("batch_count")):
-    redis.remember_forever("batch_count", 0)
-  app.run()
+	app.run()
