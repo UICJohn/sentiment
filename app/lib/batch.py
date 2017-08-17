@@ -1,4 +1,5 @@
 from ..models import TrainingSet, EmMatrix
+from .. import db_conn
 from .base import Base
 from app.config import redis, batchSize, maxBatchCount
 import pdb, json
@@ -14,15 +15,15 @@ class Batch(Base):
       batch = cls.__vector2matrix(training_sets, maxVectorSize)
       if cls.can_batch():
         batch_index = cls.__current_batch()
-        redis.forever(str(batch_index), json.dumps(batch))
-        redis.increment('batch_count')
+        redis.set(str(batch_index), json.dumps(batch))
+        redis.incr('batch_count')
 
   @classmethod
   def dequeue(cls):
     batch_index = cls.__current_batch()
     batch = redis.get(str(batch_index))
     redis.remove(str(batch_index))
-    redis.decrement('batch_count')
+    redis.decr('batch_count')
     return json.loads(batch)
 
   @classmethod
@@ -37,7 +38,7 @@ class Batch(Base):
     else:
       for i in range(0, maxBatchCount):
         if redis.get("batch-"+str(i)):
-          redis.forever("current_batch", i)
+          redis.set("current_batch", i)
           return "batch-"+str(i)
     return "batch-"+str(0)
 

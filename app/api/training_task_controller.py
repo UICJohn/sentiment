@@ -1,5 +1,4 @@
 from flask_restful import Resource
-from sentiment_celery import create_batch
 from ..lib import Batch
 from ..config import batchSize
 
@@ -11,6 +10,6 @@ class TrainingTaskController(Resource):
 		return task_info
 
 	def post(self):
-		create_batch.delay(1)
-		# Batch.enqueue()
+		# create_batch.delay(1)
+		Batch.enqueue()
 		return {"STATUS": "DONE"}

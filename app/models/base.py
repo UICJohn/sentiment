@@ -1,3 +1,3 @@
-from ..config import db_conn
+from .. import db_conn
 class Base(db_conn.Model):
 	pass
