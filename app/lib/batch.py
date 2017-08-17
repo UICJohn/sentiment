@@ -2,21 +2,23 @@ from ..models import TrainingSet, EmMatrix
 from .. import db_conn
 from .base import Base
 from app.config import redis, batchSize, maxBatchCount
+from flask import current_app
 import pdb, json
 
 class Batch(Base):
 
   @classmethod
   def enqueue(cls, quantity = 1 ):
-    maxVectorSize = TrainingSet.maxVectorSize()
-    setsCount = TrainingSet.where("trained", False).count()
-    for i in range(0, quantity):
-      training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
-      batch = cls.__vector2matrix(training_sets, maxVectorSize)
-      if cls.can_batch():
-        batch_index = cls.__current_batch()
-        redis.set(str(batch_index), json.dumps(batch))
-        redis.incr('batch_count')
+    with current_app.test_request_context():
+      maxVectorSize = TrainingSet.maxVectorSize()
+      setsCount = TrainingSet.where("trained", False).count()
+      for i in range(0, quantity):
+        training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
+        batch = cls.__vector2matrix(training_sets, maxVectorSize)
+        if cls.can_batch():
+          batch_index = cls.__current_batch()
+          redis.set(str(batch_index), json.dumps(batch))
+          redis.incr('batch_count')
 
   @classmethod
   def dequeue(cls):
