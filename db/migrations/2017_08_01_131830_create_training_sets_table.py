@@ -7,7 +7,7 @@ class CreateTrainingSetsTable(Migration):
     with self.schema.create('training_sets') as table:
       table.increments('id')
       table.text('words')
-      table.boolean("positive")
+      table.integer("positive")
       table.text('word_ids').nullable()
       table.index('positive')
       table.timestamps()

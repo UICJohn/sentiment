@@ -12,10 +12,10 @@ class TrainingSetTable(Seeder):
 		dataset_path = "aclImdb/train/"
 		positiveFiles = [dataset_path + 'pos/' + f for f in listdir(dataset_path + "pos/") if isfile(join(dataset_path + 'pos/', f))]
 		for fname in positiveFiles:
-			self.loadFile(fname, True)
+			self.loadFile(fname, 1)
 		negativeFiles = [dataset_path + 'neg/' + f for f in listdir(dataset_path + "neg/") if isfile(join(dataset_path + 'neg/', f))]
 		for fname in negativeFiles:
-			self.loadFile(fname, False)
+			self.loadFile(fname, -1)
 	
 	def word2Id(self, words):
 		ids = []
