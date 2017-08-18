@@ -28,12 +28,12 @@ class TrainingSetTable(Seeder):
 		return json.dumps(ids)
 		
 
-	def loadFile(self, fname, positive):
+	def loadFile(self, fname, label):
 		with open(fname) as f:
 			for line in f:
 				words = self.stringClean(line)
 				if not ts.where("words", words).first():
-					ts.insert({ "words": words, "positive": positive, "word_ids": self.word2Id(words)})
+					ts.insert({ "words": words, "label": label, "word_ids": self.word2Id(words)})
 					print("Trainning Set Count : " + str(ts.count()))
 
 	def stringClean(self, string):
