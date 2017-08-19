@@ -51,10 +51,12 @@ class Batch(Base):
     return "batch-"+str(0)
 
   @classmethod
-  def __vector2matrix(cls, vectors, max_sentence_len):
+  def __vector2matrix(cls, training_sets, max_sentence_len):
+    labels = []
     batch = []
-    for training_set in vectors:
+    for training_set in training_sets:
       matrix = []
+      label = [0] * 3
       word_ids = training_set.word_ids
       for word_id in word_ids:
         word = EmMatrix.where('id', word_id).first()
@@ -64,5 +66,7 @@ class Batch(Base):
           matrix.append([0] * 300)
       for l in range(len(matrix), max_sentence_len - 1):
         matrix.append([0] * 300)
+        label[training_set.label + 1] = 1
       batch.append(matrix)
-    return batch
+      labels.append(label)
+    return [batch, labels]
