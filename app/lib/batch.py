@@ -60,8 +60,8 @@ class Batch(Base):
         #TODO dule with word cannot be found in em_matrix
         word = EmMatrix.where('id', word_id).first()
         if word:
-          matrix.append(word.vector)
+          matrix.append(word.vector.extend([0]*(len(word.vector))))
         else:
-          matrix.append([0]*300)
+          matrix.append([0]*max_vector_size)
       batch.append(matrix)
     return batch
