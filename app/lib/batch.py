@@ -17,7 +17,7 @@ class Batch(Base):
         batch = cls.__vector2matrix(training_sets, maxVectorSize)
         if cls.can_batch():
           batch_index = cls.__current_batch()
-          redis.set(str(batch_index), json.dumps(batch))
+          redis.set(str(batch_index), batch)
           redis.incr('batch_count')
 
   @classmethod
