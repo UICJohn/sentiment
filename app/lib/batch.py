@@ -10,11 +10,11 @@ class Batch(Base):
   @classmethod
   def enqueue(cls, quantity = 1 ):
     with current_app.test_request_context():
-      maxVectorSize = TrainingSet.maxVectorSize()
+      maxSentenceLen = TrainingSet.maxSentenceLen()
       setsCount = TrainingSet.where("trained", False).count()
       for i in range(0, quantity):
         training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
-        batch = cls.__vector2matrix(training_sets, maxVectorSize)
+        batch = cls.__vector2matrix(training_sets, maxSentenceLen)
         if cls.can_batch():
           batch_index = cls.__current_batch()
           redis.set(str(batch_index), batch)
@@ -51,17 +51,18 @@ class Batch(Base):
     return "batch-"+str(0)
 
   @classmethod
-  def __vector2matrix(cls, vectors, max_vector_size):
+  def __vector2matrix(cls, vectors, max_sentence_len):
     batch = []
     for training_set in vectors:
       matrix = []
       word_ids = training_set.word_ids
       for word_id in word_ids:
-        #TODO dule with word cannot be found in em_matrix
         word = EmMatrix.where('id', word_id).first()
         if word:
-          matrix.append(word.vector.extend([0]*(len(word.vector))))
+          matrix.append(word.vector)
         else:
-          matrix.append([0]*max_vector_size)
+          matrix.append([0] * 300)
+      for l in range(len(matrix), max_sentence_len - 1):
+        matrix.append([0] * 300)
       batch.append(matrix)
     return batch
