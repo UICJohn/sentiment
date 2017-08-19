@@ -33,7 +33,7 @@ class Batch(Base):
     batch_count = redis.get("batch_count")
     if(not batch_count):
       return True
-    elif(batch_count < maxBatchCount):
+    elif(int(batch_count) < maxBatchCount):
       return True
     else:
       return False
