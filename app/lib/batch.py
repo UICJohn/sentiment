@@ -30,7 +30,13 @@ class Batch(Base):
 
   @classmethod
   def can_batch(cls):
-    return True if (redis.get("batch_count") < maxBatchCount) else False
+    batch_conut = redis.get("batch_count")
+    if(not batch_count):
+      return True
+    elif(batch_count < maxBatchCount):
+      return True
+    else:
+      return False
 
   @classmethod
   def __current_batch(cls):
