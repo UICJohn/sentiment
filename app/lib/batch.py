@@ -12,6 +12,7 @@ class Batch(Base):
     with current_app.test_request_context():
       maxSentenceLen = TrainingSet.maxSentenceLen()
       setsCount = TrainingSet.where("trained", False).count()
+      
       for i in range(0, quantity):
         training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
         batch = cls.__vector2matrix(training_sets, maxSentenceLen)

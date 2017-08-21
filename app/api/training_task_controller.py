@@ -3,6 +3,7 @@ from ..lib import Batch
 from ..config import batchSize
 from task import create_batch
 
+
 class TrainingTaskController(Resource):
 	def get(self):
 		task_info = {
