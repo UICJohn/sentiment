@@ -61,9 +61,9 @@ class TrainingSetController(Resource):
         labels.append([1,0])
       else:
         num = randint(12473,24903)
-        labels.append([0,1]) 
+        labels.append([0,-1]) 
       train_set[i] = ts.where('id', num).first().word_ids
-
+    print("The train set shape", train_set.shape)  
     return train_set, labels
 
 
@@ -80,9 +80,16 @@ class TrainingSetController(Resource):
 
   def post(self):
   	# TODO add trainning set
-
+    pass
 
   def getModel(self):
+    pass
+    getTrainBatch(redis.get('Batch Size'),redis.get('max_wrod_length'))
+    #createGraph()
+    # for i in xrange(100000):
+    #   nextBatch, nextBatchLabels = getTrainBatch(batchSize, maxSeqLength)
+    #   sess.run(optimizer, {input_data : nextBatch, labels: nextBatchLabels})
+
 
 
 
