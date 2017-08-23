@@ -28,7 +28,7 @@ class Batch(Base):
     batch = q.pop()
     if(batch):
       redis.decr('batch_count')
-      return json.loads(batch)
+      return batch
     else:
       return None
 
