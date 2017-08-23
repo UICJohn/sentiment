@@ -4,7 +4,6 @@ migrations/*.pyc
 GoogleNews-vectors-negative300.bin
 seeds/*.pyc
 app/config/database.py
-app/config/celery.py
 app/config/cache.py
 env/*
 aclImdb/*
