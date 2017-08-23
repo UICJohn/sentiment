@@ -5,7 +5,7 @@ from .. import db_conn
 from ..models import TrainingSet as ts
 from ..models import EmMatrix as em
 from ..lib import Trainer 
-
+from task import train
 
 import tensorflow as tf
 
@@ -26,8 +26,9 @@ class TrainingSetController(Resource):
 
   def post(self):
   	# TODO add trainning set
-    Trainer.getModel(100000)
-    pass
+    #Trainer.getModel(100000)
+    train()
+    #pass
 
 
 

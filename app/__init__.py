@@ -18,7 +18,7 @@ def init_celery(app):
 
 ORATOR_DATABASES = database
 sentiment_app = Flask(__name__)
-sentiment_app.config["CELERY_BROKER_URL"] = 'redis://192.168.0.6:6379'
+sentiment_app.config["CELERY_BROKER_URL"] = 'redis://localhost:6379'
 sentiment_app.config.from_object(__name__)
 sentiment_api = Api(sentiment_app)
 db_conn = Orator(sentiment_app)

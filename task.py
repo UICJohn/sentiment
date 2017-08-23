@@ -7,8 +7,8 @@ def create_batch(quantity = 1):
   Batch.enqueue(quantity)
 
 @celery.task()
-def train()
+def train():
 	#pass
 	#从redis 拿数据，放到trainer
 	#batch 格式 [batch, labels]
-	Batch.dequeue()
+	print(Batch.dequeue())

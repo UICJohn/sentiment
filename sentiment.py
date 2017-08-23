@@ -1,5 +1,6 @@
 import pdb
 from app.config import *
+from app.api import PredictionController
 from app.api import TrainingSetController
 from app.api import TrainingTaskController
 from app import sentiment_app, sentiment_api

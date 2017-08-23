@@ -1,2 +1,3 @@
 from .training_set_controller import TrainingSetController
 from .training_task_controller import TrainingTaskController
+from .prediction_controller import PredictionController
