@@ -12,8 +12,8 @@ class Queue(Base):
     else:
         item = redis.lpop(self.key)
     if item:
-      item = item[1]  
-    return json.loads(item)
+      item = json.loads(item[1])
+    return item
 
   def push(self, item):
     return redis.rpush(self.key, item)
