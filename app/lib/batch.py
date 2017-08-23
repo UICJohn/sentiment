@@ -26,8 +26,11 @@ class Batch(Base):
     q = Queue("batch")
     batch_index = cls.__current_batch()
     batch = q.pop()
-    redis.decr('batch_count')
-    return json.loads(batch)
+    if(batch):
+      redis.decr('batch_count')
+      return json.loads(batch)
+    else:
+      return None
 
   @classmethod
   def can_batch(cls, queue):
