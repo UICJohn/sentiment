@@ -11,4 +11,7 @@ def train():
 	#pass
 	#从redis 拿数据，放到trainer
 	#batch 格式 [batch, labels]
-	print(Batch.dequeue())
+	batches = Batch.dequeue()[0]
+	labels = Batch.dequeue()[1]
+	print(batches)
+

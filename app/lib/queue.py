@@ -12,7 +12,7 @@ class Queue(Base):
     else:
         item = redis.lpop(self.key)
     if item:
-      item = json.loads(item[1])
+      item = json.loads(item[1].decode('utf-8'))
     return item
 
   def push(self, item):
