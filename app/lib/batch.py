@@ -4,34 +4,34 @@ from .base import Base
 from app.config import redis, batchSize, maxBatchCount
 from flask import current_app
 import pdb, json
+from .queue import Queue
 
 class Batch(Base):
 
   @classmethod
   def enqueue(cls, quantity = 1 ):
     with current_app.test_request_context():
+      q = Queue("batch")
       maxSentenceLen = TrainingSet.maxSentenceLen()
       setsCount = TrainingSet.where("trained", False).count()
-      
       for i in range(0, quantity):
         training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
         batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-        if cls.can_batch():
-          batch_index = cls.__current_batch()
-          redis.set(str(batch_index), batch)
+        if cls.can_batch(q):
+          q.push(batch)
           redis.incr('batch_count')
 
   @classmethod
   def dequeue(cls):
+    q = Queue("batch")
     batch_index = cls.__current_batch()
-    batch = redis.get(str(batch_index))
-    redis.remove(str(batch_index))
+    batch = q.pop()
     redis.decr('batch_count')
     return json.loads(batch)
 
   @classmethod
-  def can_batch(cls):
-    batch_count = redis.get("batch_count")
+  def can_batch(cls, queue):
+    batch_count = queue.size()
     if(not batch_count):
       return True
     elif(int(batch_count) < maxBatchCount):
