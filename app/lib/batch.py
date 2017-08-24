@@ -68,7 +68,7 @@ class Batch(Base):
           matrix.append(word.vector)
         else:
           matrix.append([0] * 300)
-      for l in range(len(matrix), max_sentence_len - 1):
+      for l in range(len(matrix), max_sentence_len):
         matrix.append([0] * 300)
         label[training_set.label + 1] = 1
       batch.append(matrix)
