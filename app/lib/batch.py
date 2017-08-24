@@ -19,7 +19,6 @@ class Batch(Base):
         batch = cls.__vector2matrix(training_sets, maxSentenceLen)
         if cls.can_batch(q):
           q.push(batch)
-          redis.incr('batch_count')
 
   @classmethod
   def dequeue(cls):
@@ -27,7 +26,6 @@ class Batch(Base):
     batch_index = cls.__current_batch()
     batch = q.pop()
     if(batch):
-      redis.decr('batch_count')
       return batch
     else:
       return None
