@@ -20,15 +20,15 @@ class Trainer(Base):
         return string
 
     @classmethod
-    def createGraph(cls,batchSize, numClasses, maxSeqLength, numDimensions, em):
+    def createGraph(cls,data):
 
         tf.reset_default_graph()
 
-        labels = tf.placeholder(tf.float32, [batchSize, numClasses], name = 'labels_placeholder')
-        input_data = tf.placeholder(tf.int32, [batchSize, maxSeqLength], name = 'input_placeholder')
+        labels = tf.placeholder(tf.float32, [batchSize, TrainingSet.maxSentenceLen()], name = 'labels_placeholder')
+        input_data = tf.placeholder(tf.int32, [batchSize, TrainingSet.maxSentenceLen()], name = 'input_placeholder')
 
-        data = tf.Variable(tf.zeros([batchSize, maxSeqLength, numDimensions]), dtype = tf.float32)
-        data = tf.nn.embedding_lookup(em,input_data)
+        # data = tf.Variable(tf.zeros([batchSize, maxSeqLength, numDimensions]), dtype = tf.float32)
+        # data = tf.nn.embedding_lookup(em,input_data)
 
         lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
         lstmCell = tf.contrib.rnn.DropoutWrapper(cell=lstmCell, output_keep_prob=0.75)
@@ -47,29 +47,29 @@ class Trainer(Base):
         
         return prediction,optimizer
 
+    # @classmethod
+    # def getTrainBatch(cls, batchSize, maxSeqLength):
+    #     labels = []
+    #     train_set = np.zeros([batchSize, maxSeqLength])
+    #     for i in range(batchSize):
+    #         if (i%2 == 0):
+    #             num = randint(1,12472)
+    #             labels.append([1,0])
+    #         else:
+    #             num = randint(12473,24903)
+    #             labels.append([0,-1]) 
+    #         train_set[i] = ts.where('id', num).first().word_ids
+
+    #     return train_set, labels
+
+
     @classmethod
-    def getTrainBatch(cls, batchSize, maxSeqLength):
-        labels = []
-        train_set = np.zeros([batchSize, maxSeqLength])
-        for i in range(batchSize):
-            if (i%2 == 0):
-                num = randint(1,12472)
-                labels.append([1,0])
-            else:
-                num = randint(12473,24903)
-                labels.append([0,-1]) 
-            train_set[i] = ts.where('id', num).first().word_ids
-
-        return train_set, labels
-
-
-    @classmethod
-    def getModel(cls, iterations):
+    def getModel(cls, iterations,data,data_labels):
         sess = tf.InteractiveSession
-        prediction, optimizer = cls.createGraph(batchSize, 2, TrainingSet.maxSentenceLen(), 300, EmMatrix)
+        prediction, optimizer = cls.createGraph(batchSize, data)
         for i in range(iterations):
-            nextBatch, nextBatchLabels = cls.getTrainBatch(batchSize, TrainingSet.maxSentenceLen())
-            sess.run(optimizer, {input_data:nextBatch, labels:nextBatchLabels})
+            #nextBatch, nextBatchLabels = cls.getTrainBatch(batchSize, TrainingSet.maxSentenceLen())
+            sess.run(optimizer, {input_data:data, labels:data_labels})
 
             if i % 90000 == 0 and i != 0:
                 save_path = saver.save(sess, "prediction/trained_lstm.ckpt", global_step = i)
