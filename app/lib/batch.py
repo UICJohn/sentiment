@@ -9,16 +9,16 @@ from .queue import Queue
 class Batch(Base):
 
   @classmethod
-  def enqueue(cls, quantity = 1 ):
+  def enqueue(cls, quantity = None ):
     with current_app.test_request_context():
-      q = Queue("batch")
+      q = Queue(name = "batch", max_count = maxBatchCount)
       maxSentenceLen = TrainingSet.maxSentenceLen()
-      setsCount = TrainingSet.where("trained", False).count()
+      if not quantity:
+        quantity = TrainingSet.where("trained", False).count()
       for i in range(0, quantity):
         training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
         batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-        if cls.can_batch(q):
-          q.push(batch)
+        q.push(batch)
 
   @classmethod
   def dequeue(cls):
@@ -29,16 +29,6 @@ class Batch(Base):
       return batch
     else:
       return None
-
-  @classmethod
-  def can_batch(cls, queue):
-    batch_count = queue.size()
-    if(not batch_count):
-      return True
-    elif(int(batch_count) < maxBatchCount):
-      return True
-    else:
-      return False
 
   @classmethod
   def __current_batch(cls):

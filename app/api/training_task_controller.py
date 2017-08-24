@@ -3,15 +3,12 @@ from ..lib import Batch
 from ..config import batchSize
 from task import create_batch
 
-
 class TrainingTaskController(Resource):
-	def get(self):
-		task_info = {
-			"word": "hello world"
-		}
-		return task_info
+  def get(self):
+    task_info = {"word": "hello world"}
+    return task_info
 
-	def post(self):
-		create_batch.delay(1)
-		# Batch.enqueue(1)
-		return {"STATUS": "DONE"}
+  def post(self):
+    create_batch.delay(1)
+    # train.delay()
+    return {"STATUS": "DONE"}

@@ -19,7 +19,7 @@ class TrainingSetTable(Seeder):
 	
 	def word2Id(self, words):
 		ids = []
-		for i, word in enumerate(words.split(" ")):
+		for word in words.split(" "):
 			word = em.where("word", word).first()
 			if(word):
 				ids.append(word.id)

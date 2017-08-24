@@ -75,22 +75,6 @@ class Trainer(Base):
         writer.close()
         return prediction,optimizer
 
-    # @classmethod
-    # def getTrainBatch(cls, batchSize, maxSeqLength):
-    #     labels = []
-    #     train_set = np.zeros([batchSize, maxSeqLength])
-    #     for i in range(batchSize):
-    #         if (i%2 == 0):
-    #             num = randint(1,12472)
-    #             labels.append([1,0])
-    #         else:
-    #             num = randint(12473,24903)
-    #             labels.append([0,-1]) 
-    #         train_set[i] = ts.where('id', num).first().word_ids
-
-    #     return train_set, labels
-
-
     @classmethod
     def getModel(cls, data,data_labels,iterations=100000):
         #sess = tf.InteractiveSession

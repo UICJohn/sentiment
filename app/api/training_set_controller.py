@@ -22,19 +22,5 @@ class TrainingSetController(Resource):
     set_info = {'Count': TrainingSet.count(), 'Maximum Word Length': redis.get('max_word_length'), 'Batch Size': batchSize, 'Batch Count': 2}
     return set_info
 
-
-
   def post(self):
-  	# TODO add trainning set
-    #Trainer.getModel(100000)
-    train()
-    #pass
-
-
-
-
-
-
-
-
-
+    pass
