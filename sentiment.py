@@ -10,4 +10,4 @@ sentiment_api.add_resource(TrainingTaskController, '/training')
 sentiment_api.add_resource(PredictionController, '/prediction')
 
 if __name__ == '__main__':
-	sentiment_app.run()
+	sentiment_app.run(host='0.0.0.0')

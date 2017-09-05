@@ -1,4 +1,4 @@
-from .config import database
+from .config import database, brokerURL
 from flask_orator import Orator, jsonify
 from flask import Flask, request
 from flask_restful import Resource, Api
@@ -18,7 +18,7 @@ def init_celery(app):
 
 ORATOR_DATABASES = database
 sentiment_app = Flask(__name__)
-sentiment_app.config["CELERY_BROKER_URL"] = 'redis://localhost:6379'
+sentiment_app.config["CELERY_BROKER_URL"] = brokerURL
 sentiment_app.config.from_object(__name__)
 sentiment_api = Api(sentiment_app)
 db_conn = Orator(sentiment_app)

@@ -1,27 +1,33 @@
 from app import init_celery, sentiment_app
 from app.lib import Batch
 from app.lib import Trainer
+from app.config import GPU_NUMS
+from kombu.common import Broadcast
+
 celery = init_celery(sentiment_app)
+celery.conf.task_routes = {
+  'tasks.init_worker': {
+    'queue': 'worker_task',
+    'exchange': 'worker_task'
+  },
+  'tasks.init_ps': {
+    'queue': 'ps_task',
+    'exchange': 'ps_task'
+  },
+  'tasks.create_batch':{
+    'queue': 'create_batch',
+    'exchange': 'create_batch'
+  }
+}
 
-import numpy as np
-import tensorflow as tf
+@celery.task(queue = "worker_tasks")
+def init_worker():
+  Trainer(task_type= 'worker').process()
 
-@celery.task()
+@celery.task(queue = "ps_tasks")
+def init_ps():
+  Trainer(task_type= 'ps').process()
+
+@celery.task(queue = 'create_batch')
 def create_batch(quantity = 1):
 	Batch.enqueue(quantity)
-
-@celery.task()
-def train():
-	#pass
-	#从redis 拿数据，放到trainer
-	#batch 格式 [batch, labels]
-	batches = Batch.dequeue()
-	#Trainer.getModel(tf.stack(np.asarray(batches[0])),tf.stack(np.asarray(batches[1])))
-	#Trainer.getModel(np.asarray(batches[0]),np.asarray(batches[1]))
-	Trainer.getModel(tf.convert_to_tensor(np.asarray(batches[0]),dtype=np.float32),tf.convert_to_tensor(np.asarray(batches[1]),dtype=np.float32))
-	# print("#######", np.asarray(batches[0]).shape)
-	# print("#######", np.asarray(batches[1]).shape)
-	# print("++++++++++", tf.stack(np.asarray(batches[0])))
-	# print("++++++++++", tf.stack(np.asarray(batches[1])))
-		#print(batches)
-

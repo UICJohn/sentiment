@@ -5,6 +5,7 @@ GoogleNews-vectors-negative300.bin
 seeds/*.pyc
 app/config/database.py
 app/config/cache.py
+app/config/celery.py
 env/*
 aclImdb/*
 .DS_Store

@@ -1,17 +1,10 @@
 from flask_restful import Resource
 from ..models import TrainingSet
 from ..config import batchSize, redis
-from .. import db_conn
-from ..models import TrainingSet as ts
-from ..models import EmMatrix as em
-from ..lib import Trainer 
-from task import train
-
-import tensorflow as tf
+from task import init_ps
 
 
 class TrainingSetController(Resource):
-
 
   def get(self):
     if redis.has('max_word_length'):
@@ -22,19 +15,7 @@ class TrainingSetController(Resource):
     set_info = {'Count': TrainingSet.count(), 'Maximum Word Length': redis.get('max_word_length'), 'Batch Size': batchSize, 'Batch Count': 2}
     return set_info
 
-
-
   def post(self):
-  	# TODO add trainning set
-    #Trainer.getModel(100000)
-    train()
-    #pass
-
-
-
-
-
-
-
-
-
+    for i in range(0,1):
+      init_ps.delay()
+    return {"STATUS": "NONE"}

@@ -6,9 +6,12 @@ class Queue(Base):
   def __init__(self, name, namespace='sentiment'):
     self.key = '%s:%s' %(namespace, name)
 
-  def pop(self, block=True, timeout = 5):
+  def pop(self, block=True, timeout = None):
     if block:
-        item = redis.blpop(self.key, timeout=timeout)
+      if timeout:
+        item = redis.blpop(self.key, timeout = timeout)
+      else:
+        item = redis.blpop(self.key)
     else:
         item = redis.lpop(self.key)
     if item:

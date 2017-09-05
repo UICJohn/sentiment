@@ -21,7 +21,7 @@ class Batch(Base):
           q.push(batch)
 
   @classmethod
-  def dequeue(cls):
+  def dequeue(cls, timeout = 1000*60*2):
     q = Queue("batch")
     batch_index = cls.__current_batch()
     batch = q.pop()
