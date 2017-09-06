@@ -6,9 +6,7 @@ from .batch import Batch
 import tensorflow as tf
 import numpy as np
 from .task_control import TaskControl
-from task import create_batch
 import os
-
 class Trainer(Base):
   def __init__(self, task_type= 'worker'):
     tc = TaskControl(task_type = task_type)
@@ -28,7 +26,7 @@ class Trainer(Base):
       server.join()
     else:
       print("Start Training")
-      create_batch.delay()
+      Batch.enqueue()
       while True:
         batch = Batch.dequeue(timeout = 1000*60*4)
         if not batch:
@@ -37,7 +35,7 @@ class Trainer(Base):
         else:
           print("Training Begin")
           self.__create_graph(batchSize,tf.convert_to_tensor(np.asarray(batch[0]),dtype=np.float32),tf.convert_to_tensor(np.asarray(batch[1]),dtype=np.float32), server= server, cluster= cluster, iterations=100000)
-          create_batch.delay()
+          Batch.enqueue()
 
   def __create_graph(self, batchSize, data, data_labels, server, cluster, iterations=100000):
     with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:"+str(self.task_index), cluster=cluster)):
