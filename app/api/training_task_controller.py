@@ -5,8 +5,6 @@ from task import init_worker, init_ps
 
 class TrainingTaskController(Resource):
   def post(self):
-    # for i in range(1):
+    init_ps.apply_async(countdown = 5)
     init_worker.apply_async(countdown = 5)
-    # t = Trainer()
-    # t.process()
     return {"STATUS": "DONE"}

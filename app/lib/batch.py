@@ -16,6 +16,7 @@ class Batch(Base):
       setsCount = TrainingSet.where("trained", False).count()
       for i in range(0, quantity):
         training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
+        training_sets.update(trained=True)
         batch = cls.__vector2matrix(training_sets, maxSentenceLen)
         if cls.can_batch(q):
           q.push(batch)
