@@ -6,7 +6,7 @@ from celery import group
 
 class TrainingTaskController(Resource):
   def post(self):
-    init_ps.apply_async(countdown = 5)
-    worker_tasks = group(init_worker.apply_async(countdown = 5) for i in range(0, 8))()
-    worker_tasks.apply_async()
+    # init_ps.apply_async(countdown = 5)
+    for i in range(0, 8):
+      init_worker.apply_async(countdown = 5)
     return {"STATUS": "DONE"}
