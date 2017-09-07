@@ -8,5 +8,5 @@ class TrainingTaskController(Resource):
   def post(self):
     # init_ps.apply_async(countdown = 5)
     for i in range(0, 8):
-      init_worker.apply_async(countdown = 5)
+      init_worker.apply_async(countdown = 5*i)
     return {"STATUS": "DONE"}
