@@ -56,7 +56,7 @@ class Trainer(Base):
       global_step = tf.contrib.framework.get_or_create_global_step()
       optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step)
       print("Graph created")
-    hooks=[tf.train.StopAtStepHook(last_step=iterations)]
+    hooks=[tf.train.StopAtStepHook(num_step=iterations)]
     with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="/tmp", hooks=hooks) as sess:
       counter = 0
       while not sess.should_stop():
