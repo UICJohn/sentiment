@@ -34,7 +34,7 @@ class Trainer(Base):
           break
         else:
           print("Training Begin")
-          self.__create_graph(batchSize,tf.convert_to_tensor(np.asarray(batch[0]),dtype=np.float32),tf.convert_to_tensor(np.asarray(batch[1]),dtype=np.float32), server= server, cluster= cluster, iterations=100000)
+          self.__create_graph(batchSize,tf.convert_to_tensor(np.asarray(batch[0]),dtype=np.float32),tf.convert_to_tensor(np.asarray(batch[1]),dtype=np.float32), server= server, cluster= cluster, iterations=100)
           Batch.enqueue()
 
   def __create_graph(self, batchSize, data, data_labels, server, cluster, iterations=100000):
