@@ -1,7 +1,8 @@
 # Between Graph Training
 from .base import Base
 from ..models import TrainingSet
-from ..config import batchSize, numClasses, lstmUnits, cluster_spec
+from ..config import redis
+from ..config import batchSize, numClasses, lstmUnits, cluster_spec, max_epoch
 from .batch import Batch
 import tensorflow as tf
 import numpy as np
@@ -25,42 +26,62 @@ class Trainer(Base):
       print("PS TASK")
       server.join()
     else:
-      print("Start Training")
-      Batch.enqueue()
-      while True:
-        batch = Batch.dequeue(timeout = 1000*60*4)
-        if not batch:
-          print("Training Done")
-          break
-        else:
-          print("Training Begin")
-          self.__create_graph(batchSize,tf.convert_to_tensor(np.asarray(batch[0]),dtype=np.float32),tf.convert_to_tensor(np.asarray(batch[1]),dtype=np.float32), server= server, cluster= cluster, iterations=100)
-          Batch.enqueue()
+      self.__process_graph(server= server, cluster= cluster)
+  def __fetch_data(self):
+    batch = Batch.get_batch()
+    if batch:
+      return batch[0], batch[1]
+    else:
+      return None, None
 
-  def __create_graph(self, batchSize, data, data_labels, server, cluster, iterations=100000):
+  def __process_graph(self, server, cluster):
     with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:"+str(self.task_index), cluster=cluster)):
-      print("Creating graph")
+      #create graph
+      print("create graph")
       weight = tf.Variable(tf.truncated_normal([lstmUnits, numClasses]))
       bias = tf.Variable(tf.constant(0.1, shape=[numClasses]))
-      input_data = tf.placeholder(tf.int32, [batchSize, TrainingSet.maxSentenceLen(), 300], name = 'input_placeholder')
-      lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-      lstmCell = tf.contrib.rnn.DropoutWrapper(cell=lstmCell, output_keep_prob=0.75)
-      value, _ = tf.nn.dynamic_rnn(lstmCell, data, dtype=tf.float32)
-      value = tf.transpose(value, [1, 0, 2])
+      
+      print("create input")
+      #Input
+      input_data = tf.placeholder(tf.float32, [batchSize, TrainingSet.maxSentenceLen(), 300], name = 'input_placeholder')
       labels = tf.placeholder(tf.float32, [batchSize, numClasses], name = 'labels_placeholder')
-      last = tf.gather(value, int(value.get_shape()[0]) - 1)
+
+      print("global step")
+      #global_step
+      global_step = tf.contrib.framework.get_or_create_global_step()
+
+      print("initial lstm cell")
+      #initial lstm cell
+      lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
+      lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
+
+      print("Done graph")
+      #finalize graph
+      outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
+
+      print("loss and accuracy")
+      #define loss and accuracy
+      outputs = tf.transpose(outputs, [1, 0, 2])
+      last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
       prediction = (tf.matmul(last, weight) + bias)
       correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
       accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
-      global_step = tf.contrib.framework.get_or_create_global_step()
-      optimizer = tf.train.AdamOptimizer().minimize(loss, global_step=global_step)
-      print("Graph created")
-    hooks=[tf.train.StopAtStepHook(num_step=iterations)]
-    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="/tmp", hooks=hooks) as sess:
-      counter = 0
+      optimizer = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
+
+    print("run graph")
+    #run graph
+    hooks=[tf.train.StopAtStepHook(last_step = 1000)]
+    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="/tmp", hooks=hooks, log_step_count_steps=100) as sess:
+      step_count = 0
       while not sess.should_stop():
-        sess.run(optimizer, {input_data:data.eval(session= sess),labels:data_labels.eval(session=sess)})
-        if (counter%1000 == 0):
-          print("Task %d Iteration Times: %d" %(self.task_index, counter))
-        counter += 1
+        data, data_labels = self.__fetch_data()
+        if data:
+          print("Task: %d - Step: %d" % (self.task_index, step_count))
+          sess.run(optimizer, {input_data: data,labels: data_labels})
+          step_count += 1
+        else:
+          print("Training Done")
+          break;
+          #request stop
+      print("Training Done")

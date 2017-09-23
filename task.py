@@ -28,6 +28,6 @@ def init_worker():
 def init_ps():
   Trainer(task_type= 'ps').process()
 
-@celery.task(queue = 'create_batch')
-def create_batch(quantity = 1):
-	Batch.enqueue(quantity)
+# @celery.task(queue = 'worker_tasks')
+# def create_batch():
+# 	Batch.enqueue()

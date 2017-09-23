@@ -1,5 +1,4 @@
-from ..config import redis_host, redis_port, redis
-import json
+from ..config import redis
 import redis_lock
 
 class TaskControl():
@@ -13,3 +12,10 @@ class TaskControl():
         task_index = redis.get(self.task_type + "_index")
       redis.incr(self.task_type + "_index")
     return int(task_index)
+
+  def get_task_index(self):
+    task_index = 0
+    with redis_lock.Lock(redis, self.task_type+"_lock", expire = 60):
+      if redis.get(self.task_type + "_index"):
+        task_index = int(redis.get(self.task_type + "_index"))
+    return task_index

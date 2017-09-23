@@ -1,38 +1,21 @@
 from ..models import TrainingSet, EmMatrix
-from .. import db_conn
 from .base import Base
 from app.config import redis, batchSize, maxBatchCount
+import redis_lock
 from flask import current_app
-import pdb, json
 from .queue import Queue
-import pdb
 
 class Batch(Base):
-
   @classmethod
-  def enqueue(cls, quantity = 1 ):
-    with current_app.test_request_context():
-      q = Queue("batch")
+  def get_batch(cls):
+    with redis_lock.Lock(redis, "batch_lock", expire = 60):
       maxSentenceLen = TrainingSet.maxSentenceLen()
-      setsCount = TrainingSet.where("trained", False).count()
-      for i in range(0, quantity):
-        training_sets = TrainingSet.where("trained", False).order_by_raw("random()").paginate(batchSize, i)
-        for j in range(0, len(training_sets)):
-          training_sets[j].trained = True
-          training_sets[j].save()
-        batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-        if cls.can_batch(q) and len(training_sets) != 0:
-          q.push(batch)
-
-  @classmethod
-  def dequeue(cls, timeout = 1000*60*2):
-    q = Queue("batch")
-    batch_index = cls.__current_batch()
-    batch = q.pop()
-    if(batch):
-      return batch
-    else:
-      return None
+      training_sets = TrainingSet.where("iterations", cls.current_epoch()).order_by_raw("random()").paginate(batchSize, 1)
+      for i in range(0, len(training_sets)):
+        training_sets[i].iterations += 1
+        training_sets[i].save()
+      batch = cls.__vector2matrix(training_sets, maxSentenceLen)
+    return batch
 
   @classmethod
   def can_batch(cls, queue):
@@ -45,21 +28,18 @@ class Batch(Base):
       return False
 
   @classmethod
-  def __current_batch(cls):
-    current_batch = redis.get("current_batch")
-    if current_batch:
-      return current_batch
+  def current_epoch(cls):
+    epoch = redis.get("current_epoch")
+    if(epoch):
+      return int(epoch)
     else:
-      for i in range(0, maxBatchCount):
-        if redis.get("batch-"+str(i)):
-          redis.set("current_batch", i)
-          return "batch-"+str(i)
-    return "batch-"+str(0)
+      redis.incr("current_epoch")
+      return 1
 
   @classmethod
   def __vector2matrix(cls, training_sets, max_sentence_len):
     labels = []
-    batch = []
+    data = []
     for training_set in training_sets:
       matrix = []
       label = [0] * 3
@@ -73,6 +53,6 @@ class Batch(Base):
       for l in range(len(matrix), max_sentence_len):
         matrix.append([0] * 300)
         label[training_set.label + 1] = 1
-      batch.append(matrix)
+      data.append(matrix)
       labels.append(label)
-    return [batch, labels]
+    return [data, labels]
