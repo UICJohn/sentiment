@@ -75,10 +75,11 @@ class Trainer(Base):
     with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="/tmp", hooks=hooks, log_step_count_steps=100) as sess:
       step_count = 0
       while not sess.should_stop():
+        print("TASK %d FETCH DATA" % self.task_index)
         data, data_labels = self.__fetch_data()
         if data:
-          print("Task: %d - Step: %d" % (self.task_index, step_count))
           sess.run(optimizer, {input_data: data,labels: data_labels})
+          print("Task: %d - Step: %d" % (self.task_index, step_count))
           step_count += 1
         else:
           print("Training Done")
