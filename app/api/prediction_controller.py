@@ -1,5 +1,6 @@
 from flask_restful import Resource,reqparse,request
 from ..lib import Prediction
+from ..lib import Classifier
 
 class PredictionController(Resource):
 
@@ -12,3 +13,9 @@ class PredictionController(Resource):
 			return {'status': 'DONE'}
 		else:
 			return 'ERROR', 404
+
+
+
+  def get(self):
+    #TODO predict input sentence
+    predicted()

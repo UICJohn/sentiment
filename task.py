@@ -31,3 +31,6 @@ def init_ps():
 # @celery.task(queue = 'worker_tasks')
 # def create_batch():
 # 	Batch.enqueue()
+@celery.task()
+def predicted():
+  Classifier.classification("that's fucking shit")
