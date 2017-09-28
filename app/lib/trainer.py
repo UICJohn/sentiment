@@ -71,8 +71,8 @@ class Trainer(Base):
 
     print("run graph")
     #run graph
-    hooks=[tf.train.StopAtStepHook(last_step = 1000)]
-    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="/tmp", hooks=hooks, log_step_count_steps=100) as sess:
+    hooks=[tf.train.StopAtStepHook(last_step = 1500)]
+    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="/tmp", hooks=hooks) as sess:
       step_count = 0
       while not sess.should_stop():
         data, data_labels = self.__fetch_data()
@@ -81,7 +81,6 @@ class Trainer(Base):
           sess.run(optimizer, {input_data: data,labels: data_labels})
           step_count += 1
         else:
-          print("Training Done")
-          break;
+          continue
           #request stop
       print("Training Done")
