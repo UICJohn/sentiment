@@ -71,17 +71,17 @@ class Trainer(Base):
 
     print("run graph")
     #run graph
-    hooks=[tf.train.StopAtStepHook(last_step = 1000)]
-    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="/tmp", hooks=hooks) as sess:
+    saver_hooks=[tf.train.StopAtStepHook(last_step = 1000)]
+    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="models", chief_only_hooks=saver_hooks) as sess:
       # step_count = 0
-      # while not sess.should_stop():
-      #   data, data_labels = self.__fetch_data()
-      #   if data:
-      #     print("Task: %d - Step: %d" % (self.task_index, step_count))
-      #     sess.run(optimizer, {input_data: data,labels: data_labels})
-      #     step_count += 1
-      #   else:
-      #     print("Training Done")
-      #     break;
-          #request stop
+      while not sess.should_stop():
+        data, data_labels = self.__fetch_data()
+        if data:
+          print("Task: %d - Step: %d" % (self.task_index, step_count))
+          sess.run(optimizer, {input_data: data,labels: data_labels})
+          step_count += 1
+        else:
+          print("Training Done")
+          break;
+          request stop
       print("Training Done")
