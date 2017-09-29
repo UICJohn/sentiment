@@ -76,7 +76,7 @@ class Trainer(Base):
     print("run graph")
     #run graph
     hooks=[tf.train.StopAtStepHook(last_step = 1000 * max_epoch)]
-    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), chief_only_hooks = hooks) as sess:
+    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
       step_count = 0
       while not sess.should_stop():
         global_step = tf.contrib.framework.get_or_create_global_step()
