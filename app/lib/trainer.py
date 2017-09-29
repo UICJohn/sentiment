@@ -27,6 +27,7 @@ class Trainer(Base):
       server.join()
     else:
       self.__process_graph(server= server, cluster= cluster)
+
   def __fetch_data(self):
     batch = Batch.get_batch()
     if batch:
@@ -71,17 +72,12 @@ class Trainer(Base):
 
     print("run graph")
     #run graph
-    saver_hooks=[tf.train.StopAtStepHook(last_step = 1000)]
-    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir="models", chief_only_hooks=saver_hooks) as sess:
+    saver_hooks=[tf.train.StopAtStepHook(last_step = 500 * max_epoch)]
+    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiments/logs/'), chief_only_hooks=saver_hooks) as sess:
       # step_count = 0
       while not sess.should_stop():
         data, data_labels = self.__fetch_data()
-        if data:
-          print("Task: %d - Step: %d" % (self.task_index, step_count))
-          sess.run(optimizer, {input_data: data,labels: data_labels})
-          step_count += 1
-        else:
-          print("Training Done")
-          break;
-          request stop
+        print("Task: %d - Step: %d" % (self.task_index, step_count))
+        sess.run(optimizer, {input_data: data,labels: data_labels})
+        step_count += 1
       print("Training Done")
