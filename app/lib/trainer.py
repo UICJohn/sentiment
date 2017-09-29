@@ -68,16 +68,20 @@ class Trainer(Base):
       correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
       accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
-      optimizer = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
+      train_step = (
+        tf.train.AdamOptimizer()
+        .minimize(loss, global_step = global_step)
+      )
 
     print("run graph")
     #run graph
     saver_hooks=[tf.train.StopAtStepHook(last_step = 500 * max_epoch)]
-    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiments/logs/'), chief_only_hooks=saver_hooks) as sess:
+    with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), chief_only_hooks=saver_hooks) as sess:
       step_count = 0
       while not sess.should_stop():
         data, data_labels = self.__fetch_data()
         print("Task: %d - Step: %d" % (self.task_index, step_count))
-        sess.run(optimizer, {input_data: data,labels: data_labels})
+        variables = [loss, train_step]
+        sess.run(variables, {input_data: data,labels: data_labels})
         step_count += 1
       print("Training Done")
