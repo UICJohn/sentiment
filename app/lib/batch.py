@@ -16,7 +16,6 @@ class Batch(Base):
         for i in range(0, training_set_count):
           training_sets = TrainingSet.order_by_raw("random()").paginate(batchSize, i)
           batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-          print("Batch Enqueue %d" % i)
           q.push(batch)
 
   @classmethod
@@ -24,7 +23,6 @@ class Batch(Base):
      q = Queue("batch")
      batch = q.pop()
      if(batch):
-      redis.decr('batch_count')
       return batch[0], batch[1]
      else:
        return None, None
