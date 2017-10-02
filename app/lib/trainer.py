@@ -88,7 +88,7 @@ class Trainer(Base):
       print("Training Done")
   
   def __fetch_data(self):
-     batch = Batch.get_batch()
+    batch = Batch.get_batch()
     if batch:
       return batch[0], batch[1]
     else:
