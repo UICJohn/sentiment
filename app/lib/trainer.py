@@ -53,6 +53,9 @@ class Trainer(Base):
       #finalize graph
       outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
+      tf.add_to_collection('pred_network', prediction)
+      print("Done save graph")
+
       print("loss and accuracy")
       #define loss and accuracy
       outputs = tf.transpose(outputs, [1, 0, 2])

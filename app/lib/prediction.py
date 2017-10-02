@@ -35,7 +35,6 @@ class Prediction(Base):
     #   prediction = tf.get_collection('pred_network')[0]
     #   preddictedSentiment = sess.run(prediction, {input_data: test_data})
     print("Checking predictedSentiment ... ", predictedSentiment)
-    print("Checking preddictedSentiment...", predictedSentiment)
     if (predictedSentiment[0])>(predictedSentiment[1]):
       print("Positive value is ", predictedSentiment[0])
       return 1
