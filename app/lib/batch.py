@@ -12,10 +12,9 @@ class Batch(Base):
       q = Queue("batch")
       maxSentenceLen = TrainingSet.maxSentenceLen()
       training_set_count = TrainingSet.count()
-      training_sets = TrainingSet.order_by_raw("random()")
       for j in range(0, max_epoch):
         for i in range(0, training_set_count):
-          training_sets = training_sets.paginate(batchSize, i)
+          training_sets = TrainingSet.order_by_raw("random()").paginate(batchSize, i)
           batch = cls.__vector2matrix(training_sets, maxSentenceLen)
           q.push(batch)
 
