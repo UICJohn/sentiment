@@ -8,15 +8,25 @@ from .queue import Queue
 class Batch(Base):
   @classmethod
   def enqueue(cls):
+    q = Queue("batch")
     maxSentenceLen = TrainingSet.maxSentenceLen()
     training_set_count = TrainingSet.count()
     training_sets = TrainingSet.order_by_raw("random()")
-    for i in range(0, training_set_count):
-      # change here
-      training_sets = training_sets.paginate(batchSize, i)
-      batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-      q.push(batch)
+    for j in range(0, max_epoch):
+      for i in range(0, training_set_count):
+        training_sets = training_sets.paginate(batchSize, i)
+        batch = cls.__vector2matrix(training_sets, maxSentenceLen)
+        q.push(batch)
 
+  @classmethod
+  def dequeue(cls):
+     q = Queue("batch")
+     batch = q.pop()
+     if(batch):
+      redis.decr('batch_count')
+      return batch[0], batch[1]
+     else:
+       return None, None
 
   @classmethod
   def can_batch(cls, queue):

@@ -2,12 +2,12 @@ from ..models import TrainingSet
 from flask_restful import Resource
 from ..lib import Batch, Trainer, TaskControl
 from ..config import batchSize, redis
-from task import init_worker, init_ps
+from task import init_worker, init_ps, create_batch
 from celery import group
 
 class TrainingTaskController(Resource):
   def post(self):
-    TrainingSet.where('iterations', '!=', 1).update(iterations = 1)
+    create_batch.delay()
     for i in range(0, 8):
-      init_worker.apply_async(countdown = 100*i)
+      init_worker.apply_async(countdown = 300)
     return {"STATUS": "DONE"}
