@@ -8,15 +8,16 @@ from .queue import Queue
 class Batch(Base):
   @classmethod
   def enqueue(cls):
-    q = Queue("batch")
-    maxSentenceLen = TrainingSet.maxSentenceLen()
-    training_set_count = TrainingSet.count()
-    training_sets = TrainingSet.order_by_raw("random()")
-    for j in range(0, max_epoch):
-      for i in range(0, training_set_count):
-        training_sets = training_sets.paginate(batchSize, i)
-        batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-        q.push(batch)
+    with current_app.test_request_context():
+      q = Queue("batch")
+      maxSentenceLen = TrainingSet.maxSentenceLen()
+      training_set_count = TrainingSet.count()
+      training_sets = TrainingSet.order_by_raw("random()")
+      for j in range(0, max_epoch):
+        for i in range(0, training_set_count):
+          training_sets = training_sets.paginate(batchSize, i)
+          batch = cls.__vector2matrix(training_sets, maxSentenceLen)
+          q.push(batch)
 
   @classmethod
   def dequeue(cls):
