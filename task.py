@@ -33,5 +33,6 @@ def create_batch():
 	Batch.enqueue()
  
 @celery.task()
-def predicted():
-  Classifier.classification("that's fucking shit")
+def output():
+  print("############### Starting run predict")
+  Prediction.process("that is fucking shit")

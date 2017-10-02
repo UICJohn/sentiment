@@ -12,7 +12,5 @@ class PredictionController(Resource):
 		# else:
 		# 	return 'ERROR', 404
 
-  # def get(self):
-    #TODO predict input sentence
-    # predicted()
-  pass
+  def post(self):
+    output()
