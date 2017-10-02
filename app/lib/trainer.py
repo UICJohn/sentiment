@@ -28,14 +28,13 @@ class Trainer(Base):
     else:
       self.__process_graph(server= server, cluster= cluster)
 
-  def __fetch_data(self):
-    batch = Batch.get_batch()
-    if batch:
-      return batch[0], batch[1]
-    else:
-      return None, None
 
   def __process_graph(self, server, cluster):
+    self.__create_graph(server, cluster)
+    for i in range(0, max_epoch):
+      self.__run_graph(server, cluster)
+
+  def __create_graph(self, server ,cluster):
     with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:"+str(self.task_index), cluster=cluster)):
       #create graph
       print("create graph")
@@ -75,6 +74,8 @@ class Trainer(Base):
 
     print("run graph")
     #run graph
+
+  def __run_graph(self, server, cluster):
     hooks=[tf.train.StopAtStepHook(last_step = 100 * max_epoch)]
     with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
       step_count = 0
@@ -85,3 +86,10 @@ class Trainer(Base):
         sess.run(variables, {input_data: data,labels: data_labels})
         step_count += 1
       print("Training Done")
+  
+  def __fetch_data(self):
+     batch = Batch.get_batch()
+    if batch:
+      return batch[0], batch[1]
+    else:
+      return None, None

@@ -1,21 +1,22 @@
 from ..models import TrainingSet, EmMatrix
 from .base import Base
-from app.config import redis, batchSize, maxBatchCount
+from app.config import redis, batchSize, maxBatchCount, max_epoch
 import redis_lock
 from flask import current_app
 from .queue import Queue
 
 class Batch(Base):
   @classmethod
-  def get_batch(cls):
-    with redis_lock.Lock(redis, "batch_lock", expire = 60):
-      maxSentenceLen = TrainingSet.maxSentenceLen()
-      training_sets = TrainingSet.where("iterations", cls.current_epoch()).order_by_raw("random()").paginate(batchSize, 1)
-      for i in range(0, len(training_sets)):
-        training_sets[i].iterations += 1
-        training_sets[i].save()
+  def enqueue(cls):
+    maxSentenceLen = TrainingSet.maxSentenceLen()
+    training_set_count = TrainingSet.count()
+    training_sets = TrainingSet.order_by_raw("random()")
+    for i in range(0, training_set_count):
+      # change here
+      training_sets = training_sets.paginate(batchSize, i)
       batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-    return batch
+      q.push(batch)
+
 
   @classmethod
   def can_batch(cls, queue):
@@ -26,15 +27,6 @@ class Batch(Base):
       return True
     else:
       return False
-
-  @classmethod
-  def current_epoch(cls):
-    epoch = redis.get("current_epoch")
-    if(epoch):
-      return int(epoch)
-    else:
-      redis.incr("current_epoch")
-      return 1
 
   @classmethod
   def __vector2matrix(cls, training_sets, max_sentence_len):

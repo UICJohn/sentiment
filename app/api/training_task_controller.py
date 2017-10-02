@@ -9,5 +9,5 @@ class TrainingTaskController(Resource):
   def post(self):
     TrainingSet.where('iterations', '!=', 1).update(iterations = 1)
     for i in range(0, 8):
-      init_worker.apply_async(countdown = 10*i)
+      init_worker.apply_async(countdown = 100*i)
     return {"STATUS": "DONE"}
