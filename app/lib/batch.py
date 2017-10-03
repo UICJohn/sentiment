@@ -14,9 +14,9 @@ class Batch(Base):
       training_set_count = int(TrainingSet.count()/batchSize)
       for j in range(0, max_epoch):
         for i in range(0, training_set_count):
-          training_sets = TrainingSet.order_by_raw("random()").paginate(batchSize, i)
-          batch = cls.__vector2matrix(training_sets, maxSentenceLen)
-          q.push(batch)
+          training_sets = TrainingSet.select("id").order_by_raw("random()").paginate(batchSize, i)
+          ids_arr = [a[i].id for i in range(0, a.count())]
+          q.push(ids_arr)
 
   @classmethod
   def dequeue(cls):
@@ -37,23 +37,22 @@ class Batch(Base):
     else:
       return False
 
-  @classmethod
-  def __vector2matrix(cls, training_sets, max_sentence_len):
-    labels = []
-    data = []
-    for training_set in training_sets:
-      matrix = []
-      label = [0] * 3
-      word_ids = training_set.word_ids
-      for word_id in word_ids:
-        word = EmMatrix.where('id', word_id).first()
-        if word:
-          matrix.append(word.vector)
-        else:
-          matrix.append([0] * 300)
-      for l in range(len(matrix), max_sentence_len):
-        matrix.append([0] * 300)
-        label[training_set.label + 1] = 1
-      data.append(matrix)
-      labels.append(label)
-    return [data, labels]
+  # def __vector2matrix(cls, training_sets, max_sentence_len):
+  #   labels = []
+  #   data = []
+  #   for training_set in training_sets:
+  #     matrix = []
+  #     label = [0] * 3
+  #     word_ids = training_set.word_ids
+  #     for word_id in word_ids:
+  #       word = EmMatrix.where('id', word_id).first()
+  #       if word:
+  #         matrix.append(word.vector)
+  #       else:
+  #         matrix.append([0] * 300)
+  #     for l in range(len(matrix), max_sentence_len):
+  #       matrix.append([0] * 300)
+  #       label[training_set.label + 1] = 1
+  #     data.append(matrix)
+  #     labels.append(label)
+  #   return [data, labels]

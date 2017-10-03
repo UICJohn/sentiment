@@ -5,6 +5,7 @@ class TrainingSet(Base):
   __casts__={
   'word_ids': 'list'
   }
+
   @classmethod
   def maxSentenceLen(cls):
     max_sentence_len = redis.get("max_sentence_len")
