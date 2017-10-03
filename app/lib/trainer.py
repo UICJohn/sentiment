@@ -53,7 +53,6 @@ class Trainer(Base):
       #finalize graph
       outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
-      tf.add_to_collection('pred_network', prediction)
       print("Done save graph")
 
       print("loss and accuracy")
@@ -61,6 +60,7 @@ class Trainer(Base):
       outputs = tf.transpose(outputs, [1, 0, 2])
       last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
       prediction = (tf.matmul(last, weight) + bias)
+      tf.add_to_collection('pred_network', prediction)
       correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
       accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
