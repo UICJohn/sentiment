@@ -72,7 +72,7 @@ class Trainer(Base):
       for i in range(0, max_epoch):
         print("run graph")
         hooks=[tf.train.StopAtStepHook(last_step = 500 * (i + 1))]
-        with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
+        with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), config=tf.ConfigProto(log_device_placement=True), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
           while not sess.should_stop():
             if(self.task_index == 0):
