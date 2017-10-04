@@ -3,6 +3,7 @@ from app.lib import Batch
 from app.lib import Trainer
 from app.config import GPU_NUMS
 from kombu.common import Broadcast
+from app.lib import Prediction
 
 celery = init_celery(sentiment_app)
 celery.conf.task_routes = {

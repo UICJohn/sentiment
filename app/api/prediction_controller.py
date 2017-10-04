@@ -1,6 +1,6 @@
 from flask_restful import Resource,reqparse,request
-# from ..lib import Prediction
-# from ..lib import Classifier
+from ..lib import Prediction
+from task import output
 
 class PredictionController(Resource):
   # def post(self):
