@@ -12,8 +12,7 @@ class Base():
       word_ids = training_set.word_ids
       words = EmMatrix.select("vector").where_in('id', word_ids).get()
       matrix = [ word.vector for word in words ]
-      for l in range(len(matrix), max_sentence_len):
-        matrix.append([0] * 300)
+      matrix.append([[0]*300] * (max_sentence_len - len(word_ids)))
       label[training_set.label + 1] = 1
       data.append(matrix)
       labels.append(label)
