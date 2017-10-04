@@ -65,10 +65,7 @@ class Trainer(Base):
       correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
       accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
-      train_step = (
-        tf.train.AdamOptimizer()
-        .minimize(loss, global_step = global_step)
-      )
+      op = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
       for i in range(0, max_epoch):
         print("run graph")
         hooks=[tf.train.StopAtStepHook(last_step = 1000 * (i + 1))]
@@ -81,8 +78,7 @@ class Trainer(Base):
             data, data_labels = self.vector2matrix(training_set_ids)
             if(self.task_index == 0):
               print("End Dequeue Task %d" % self.task_index)
-            variables = [loss, train_step]
-            sess.run(variables, {input_data: data,labels: data_labels})
+            sess.run(op, {input_data: data, labels: data_labels})
             if(self.task_index == 0):
               print("Task: %d - Step: %d" % (self.task_index, step_count))
             step_count += 1
