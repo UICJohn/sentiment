@@ -9,5 +9,5 @@ class TrainingTaskController(Resource):
   def post(self):
     create_batch.delay()
     for i in range(0, 8):
-      init_worker.apply_async(countdown = 300)
+      init_worker.apply_async(countdown = 60)
     return {"STATUS": "DONE"}
