@@ -77,7 +77,8 @@ class Trainer(Base):
           while not sess.should_stop():
             if(self.task_index == 0):
               print("Start Dequeue Task %d" % self.task_index)
-            data, data_labels = Batch.dequeue()
+            training_set_ids = Batch.dequeue()
+            data, data_labels = self.vector2matrix(training_set_ids)
             if(self.task_index == 0):
               print("End Dequeue Task %d" % self.task_index)
             variables = [loss, train_step]
