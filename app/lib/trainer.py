@@ -9,6 +9,7 @@ import numpy as np
 from .task_control import TaskControl
 import os
 class Trainer(Base):
+
   def __init__(self, task_type= 'worker'):
     tc = TaskControl(task_type = task_type)
     self.task_index = tc.add_task()
