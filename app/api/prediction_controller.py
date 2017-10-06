@@ -16,4 +16,4 @@ class PredictionController(Resource):
     sentence = request.values.get('demo')
     result = output(sentence)
     
-    return {'Input sentence :': sentence,'Probability': str(result).strip('[]')}
+    return {'Input sentence :': sentence,'Probability':str(result[0]).strip(','),'Label': str(result[1])}

@@ -8,7 +8,7 @@ from ..config import batchSize, redis
 from .. import db_conn
 from ..config import batchSize, numClasses, lstmUnits, cluster_spec, max_epoch
 from .batch import Batch
-
+import datetime
 import numpy as np
 
 import tensorflow as tf
@@ -59,6 +59,7 @@ class Prediction(Base):
         saver = tf.train.Saver()
 
     prediction_result  = []
+    final_result = ''
     with tf.Session(graph = graph) as sess:
         ckpt = tf.train.get_checkpoint_state('logs')
         # print("==============================================", ckpt)
@@ -72,21 +73,30 @@ class Prediction(Base):
             #print("Checking predictedSentiment ... ", predictedSentiment[23])
             if (predictedSentiment[0])>(predictedSentiment[2]):
                 print("Positive value is ", predictedSentiment[0])
+
+                final_result = 'Positive'
+                prediction_result.append(predictedSentiment)
+                prediction_result.append('Positive')
+                #print('------------------------', prediction_result)
+                #prediction_result[predictedSentiment[0], final_result]
                 #prediction_result = predictedSentiment[0]
             else:
-                print("Negative value is ", predictedSentiment[2])
+                #print("Negative value is ", predictedSentiment[2])
                 #prediction_result = predictedSentiment[2]
+                prediction_result.append(predictedSentiment)
+                prediction_result.append('Negative')
+                final_result = 'Negative'
 
         else:
             print('no checkpoint found')
             return
-    prediction_result = predictedSentiment
+    #prediction_result = predictedSentiment
     return prediction_result
 
   @classmethod
   def __getSentenceMatrix(self, string):
     cleanedSentence = self.__cleanSentences(string)
-    # print('-----------------', cleanedSentence)
+    print('-----------------', cleanedSentence)
     split = cleanedSentence.split()
     batch = []
     final = []
