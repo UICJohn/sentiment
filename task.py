@@ -34,7 +34,8 @@ def create_batch():
 	Batch.enqueue()
  
 @celery.task()
-def output():
-  print("############### Starting run predict")
-  label = Prediction.process("that is fucking shit")
+def output(sentence):
+  print("############### Starting run predict", sentence)
+  
+  label = Prediction.process(sentence)
   return label

@@ -86,7 +86,7 @@ class Prediction(Base):
   @classmethod
   def __getSentenceMatrix(self, string):
     cleanedSentence = self.__cleanSentences(string)
-    #print('-----------------', cleanedSentence)
+    # print('-----------------', cleanedSentence)
     split = cleanedSentence.split()
     batch = []
     final = []
@@ -94,7 +94,11 @@ class Prediction(Base):
     for word in split:
       matrix = []
       if word:
-        word_vector = em.where('word', word).first().vector
+        if em.where('word', word).first():
+            word_vector = em.where('word', word).first().vector
+        else:
+            word_vector.append([0] * 300)
+        #word_vector = em.where('word', word).first().vector
         # print('each work corresponding vector ----', word, word_vector)
         # print('\n')
         #print('each work of sentence corresponding vector is ', len(word_vector))

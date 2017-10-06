@@ -13,6 +13,7 @@ class PredictionController(Resource):
 		# 	return 'ERROR', 404
 
   def post(self):
-    result = output()
+    sentence = request.values.get('demo')
+    result = output(sentence)
     
-    return {'Probability': str(result).strip('[]')}
+    return {'Input sentence :': sentence,'Probability': str(result).strip('[]')}
