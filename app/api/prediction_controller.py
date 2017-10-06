@@ -13,4 +13,6 @@ class PredictionController(Resource):
 		# 	return 'ERROR', 404
 
   def post(self):
-    output()
+    result = output()
+    
+    return {'Probability': str(result).strip('[]')}

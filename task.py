@@ -36,4 +36,5 @@ def create_batch():
 @celery.task()
 def output():
   print("############### Starting run predict")
-  Prediction.process("that is fucking shit")
+  label = Prediction.process("that is fucking shit")
+  return label
