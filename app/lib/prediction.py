@@ -51,7 +51,12 @@ class Prediction(Base):
 
         outputs = tf.transpose(outputs, [1, 0, 2])
         last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
+<<<<<<< HEAD
         prediction = tf.softmax(tf.matmul(last, weight) + bias)
+=======
+        prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
+        
+>>>>>>> 992516f325f8d5cba399a9757049f40eed22e502
         correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
         accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
