@@ -73,16 +73,10 @@ class Prediction(Base):
             #print("Checking predictedSentiment ... ", predictedSentiment[23])
             if (predictedSentiment[0])>(predictedSentiment[2]):
                 print("Positive value is ", predictedSentiment[0])
-
                 final_result = 'Positive'
                 prediction_result.append(predictedSentiment)
                 prediction_result.append('Positive')
-                #print('------------------------', prediction_result)
-                #prediction_result[predictedSentiment[0], final_result]
-                #prediction_result = predictedSentiment[0]
             else:
-                #print("Negative value is ", predictedSentiment[2])
-                #prediction_result = predictedSentiment[2]
                 prediction_result.append(predictedSentiment)
                 prediction_result.append('Negative')
                 final_result = 'Negative'
@@ -90,7 +84,6 @@ class Prediction(Base):
         else:
             print('no checkpoint found')
             return
-    #prediction_result = predictedSentiment
     return prediction_result
 
   @classmethod
