@@ -28,11 +28,11 @@ class Prediction(Base):
     print('test data is ', len(test_data))
     print('test data details ', len(test_data[0]))
     # print('=================',len(self.__getSentenceMatrix(sentence)))
-    test_data = tf.stack(np.asarray(test_data))
-    print('======================',test_data)
-    tf.reshape(test_data, [batchSize, TrainingSet.maxSentenceLen(), 300])
-    print('reshape ======================',test_data)
-    print('======================', tf.__version__)
+    #test_data = tf.stack(np.asarray(test_data))
+    #print('======================',test_data)
+    # tf.reshape(test_data, [batchSize, TrainingSet.maxSentenceLen(), 300])
+    # print('reshape ======================',test_data)
+    # print('======================', tf.__version__)
 
     graph = tf.Graph()
 
@@ -51,7 +51,7 @@ class Prediction(Base):
 
         outputs = tf.transpose(outputs, [1, 0, 2])
         last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
-        prediction = (tf.matmul(last, weight) + bias)
+        prediction = tf.softmax(tf.matmul(last, weight) + bias)
         correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
         accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
@@ -83,6 +83,7 @@ class Prediction(Base):
     print('-----------------', cleanedSentence)
     split = cleanedSentence.split()
     batch = []
+    final = []
     print('the split is ', split)
     for word in split:
       matrix = []
@@ -98,7 +99,11 @@ class Prediction(Base):
     print('The shape of matrix is ', len(matrix))
     for l in range(len(matrix), TrainingSet.maxSentenceLen()):
       matrix.append([0] * 300)
-    batch.append(matrix)
+    for i in range(1,25):
+        batch.append(matrix)
+    #print('The shape of final is ', len(final))
+    #batch.append(final)
+
     # tf.convert_to_tensor(np.asarray(batch),dtype=np.float32)
     #tf.stack(np.asarray(batch))
     # print("the input batch shape is ", batch.shape)
