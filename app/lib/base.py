@@ -1,5 +1,7 @@
 from ..models import TrainingSet, EmMatrix
 from datetime import datetime
+from app.config import redis
+import numpy as np
 import json
 class Base():
   def vector2matrix(self, training_set_ids):
@@ -11,8 +13,7 @@ class Base():
     for training_set in training_sets:
       label = [0] * 3
       word_ids = training_set.word_ids
-      words = EmMatrix.select("vector").where_in('id', word_ids).get()
-      matrix = [ word.vector for word in words ]
+      matrix = [ json.loads(redis.hget("embedding_matrix", word_id).decode("utf-8")) for word_id in word_ids ]
       matrix.append([[0]*300] * (max_sentence_len - len(word_ids)))
       label[training_set.label + 1] = 1
       data.append(matrix)

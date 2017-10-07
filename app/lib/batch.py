@@ -4,16 +4,20 @@ from app.config import redis, batchSize, maxBatchCount, max_epoch
 import redis_lock
 from flask import current_app
 from .queue import Queue
-
+import json
 class Batch(Base):
   @classmethod
   def enqueue(cls):
     with current_app.test_request_context():
       q = Queue("batch")
-      training_set_count = int(TrainingSet.count()/batchSize)
+      # training_set_count = int(TrainingSet.count()/batchSize)
+      training_set_count = 2
       for j in range(0, max_epoch):
         for i in range(0, training_set_count):
-          training_sets = TrainingSet.select("id").order_by_raw("random()").paginate(batchSize, i)
+          training_sets = TrainingSet.select("id", "word_ids").order_by_raw("random()").paginate(batchSize, i)
+          for training_set in training_sets:
+            for word_id in training_set.word_ids:
+              redis.hsetnx("embedding_matrix", word_id, json.dumps(EmMatrix.find_or_fail(word_id).vector))
           ids_arr = [training_set.id for training_set in training_sets]
           q.push(ids_arr)
 
