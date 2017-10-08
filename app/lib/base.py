@@ -2,7 +2,7 @@ from ..models import TrainingSet, EmMatrix
 from datetime import datetime
 from app.config import redis
 import numpy as np
-import json
+import pickle
 class Base():
   def vector2matrix(self, training_set_ids):
     start_at = datetime.now()
@@ -13,8 +13,8 @@ class Base():
     for training_set in training_sets:
       label = [0] * 3
       word_ids = training_set.word_ids
-      matrix = [ json.loads(redis.hget("embedding_matrix", word_id).decode("utf-8")) for word_id in word_ids ]
-      matrix.append([[0]*300] * (max_sentence_len - len(word_ids)))
+      matrix = [ pickle.loads(redis.hget("embedding_matrix", word_id)) for word_id in word_ids ]
+      matrix.extend([[0]*300] * (max_sentence_len - len(word_ids)))
       label[training_set.label + 1] = 1
       data.append(matrix)
       labels.append(label)
