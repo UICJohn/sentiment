@@ -27,10 +27,9 @@ class TrainingSetTable(Seeder):
 		return json.dumps(ids)
 		
 
-	def loadFile(self, fname):
-		if "pos" in fname:
-			label = 1
-		else
+	def loadFile(self, fname):	
+		label = 1
+		if "neg" in fname:
 			label = -1
 		with open(fname) as f:
 			for line in f:
