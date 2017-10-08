@@ -1,6 +1,6 @@
 from app import init_celery, sentiment_app
-from app.lib import Batch
-from app.lib import Trainer
+from app.lib import Batch, Trainer, Vector
+from app.models import TrainingSet
 from app.config import GPU_NUMS
 from kombu.common import Broadcast
 from app.lib import Prediction
@@ -34,6 +34,15 @@ def init_ps():
 def create_batch():
 	Batch.enqueue()
  
+@celery.task(queue = 'worker_tasks')
+def init_redis():
+  v = Vector()
+  counter = 0
+  for training_set in TrainingSet.get():
+    v.add(training_set)
+    print("TrainingSet Vector Count: %d" % counter)
+    counter += 1
+
 @celery.task()
 def output(sentence):
   print("############### Starting run predict", sentence)
