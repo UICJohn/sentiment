@@ -6,15 +6,14 @@ import re
 import json
 from app.models import TrainingSet as ts
 from app.models import EmMatrix as em
+from random import shuffle
 
 class TrainingSetTable(Seeder):
 	def run(self):
 		dataset_path = "aclImdb/train/"
-		positiveFiles = [dataset_path + 'pos/' + f for f in listdir(dataset_path + "pos/") if isfile(join(dataset_path + 'pos/', f))]
-		for fname in positiveFiles:
-			self.loadFile(fname, 1)
-		negativeFiles = [dataset_path + 'neg/' + f for f in listdir(dataset_path + "neg/") if isfile(join(dataset_path + 'neg/', f))]
-		for fname in negativeFiles:
+		trainingFiles = [dataset_path + 'pos/' + f for f in listdir(dataset_path + "pos/") if isfile(join(dataset_path + 'pos/', f))] + [dataset_path + 'neg/' + f for f in listdir(dataset_path + "neg/") if isfile(join(dataset_path + 'neg/', f))]
+		shuffle(trainingFiles)
+		for fname in trainingFiles:
 			self.loadFile(fname, -1)
 	
 	def word2Id(self, words):
@@ -28,7 +27,11 @@ class TrainingSetTable(Seeder):
 		return json.dumps(ids)
 		
 
-	def loadFile(self, fname, label):
+	def loadFile(self, fname):
+		if "pos" in fname:
+			label = 1
+		else
+			label = -1
 		with open(fname) as f:
 			for line in f:
 				words = self.stringClean(line)
