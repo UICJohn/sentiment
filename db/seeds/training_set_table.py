@@ -14,7 +14,7 @@ class TrainingSetTable(Seeder):
 		trainingFiles = [dataset_path + 'pos/' + f for f in listdir(dataset_path + "pos/") if isfile(join(dataset_path + 'pos/', f))] + [dataset_path + 'neg/' + f for f in listdir(dataset_path + "neg/") if isfile(join(dataset_path + 'neg/', f))]
 		shuffle(trainingFiles)
 		for fname in trainingFiles:
-			self.loadFile(fname, -1)
+			self.loadFile(fname)
 	
 	def word2Id(self, words):
 		ids = []
