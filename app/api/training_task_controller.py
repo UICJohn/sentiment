@@ -7,7 +7,7 @@ from celery import group
 
 class TrainingTaskController(Resource):
   def post(self):
-    create_batch.delay()
+    Batch.enqueue()
     for i in range(0, 8):
       init_worker.apply_async(countdown = 60)
     return {"STATUS": "DONE"}
