@@ -13,7 +13,8 @@ class Batch(Base):
       training_set_count = int(TrainingSet.count()/batchSize)
       for j in range(0, max_epoch):
         for i in range(0, training_set_count):
-          training_sets = TrainingSet.select("id", "word_ids").order_by_raw("random()").paginate(batchSize, i)
+          print("TrainingSet Count: %d" % i)
+          training_sets = TrainingSet.select("id", "word_ids").paginate(batchSize, i)
           for training_set in training_sets:
             for word_id in training_set.word_ids:
               redis.hsetnx("embedding_matrix", word_id, pickle.dumps(EmMatrix.find_or_fail(word_id).vector))
