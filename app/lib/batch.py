@@ -15,9 +15,6 @@ class Batch(Base):
         for i in range(0, training_set_count):
           print("TrainingSet Count: %d" % i)
           training_sets = TrainingSet.select("id", "word_ids").paginate(batchSize, i)
-          for training_set in training_sets:
-            for word_id in training_set.word_ids:
-              redis.hsetnx("embedding_matrix", word_id, pickle.dumps(EmMatrix.find_or_fail(word_id).vector))
           ids_arr = [training_set.id for training_set in training_sets]
           q.push(ids_arr)
 
@@ -38,8 +35,7 @@ class Batch(Base):
     elif(int(batch_count) < maxBatchCount):
       return True
     else:
-      return False
-
+      return False  
   # def __vector2matrix(cls, training_sets, max_sentence_len):
   #   labels = []
   #   data = []
