@@ -21,18 +21,7 @@ class Prediction(Base):
   @classmethod
   def process(self, sentence):
     # print("Coming into prediction prcess")
-    # print('Input sentence is ' ,sentence)
     test_data = self.__getSentenceMatrix(sentence)
-    # print('======================', len(test_data[0]))
-    # print('\n')
-    # print('test data is ', len(test_data))
-    # print('test data details ', len(test_data[0]))
-    # print('=================',len(self.__getSentenceMatrix(sentence)))
-    #test_data = tf.stack(np.asarray(test_data))
-    #print('======================',test_data)
-    # tf.reshape(test_data, [batchSize, TrainingSet.maxSentenceLen(), 300])
-    # print('reshape ======================',test_data)
-    # print('======================', tf.__version__)
     graph = tf.Graph()
 
     with graph.as_default():
@@ -62,15 +51,11 @@ class Prediction(Base):
     final_result = ''
     with tf.Session(graph = graph) as sess:
         ckpt = tf.train.get_checkpoint_state('logs')
-        # print("==============================================", ckpt)
-        # print('\n')
-        # print("==============================================", tf.gfile.Exists('logs'))
         if ckpt and tf.gfile.Exists('logs'):
             print('Start load model')
             saver.restore(sess, ckpt.model_checkpoint_path)
             predictedSentiment = sess.run(prediction, {input_data:test_data})[0]
             print('====================================', predictedSentiment)
-            #print("Checking predictedSentiment ... ", predictedSentiment[23])
             if (predictedSentiment[0])>(predictedSentiment[2]):
                 print("Positive value is ", predictedSentiment[0])
                 final_result = 'Positive'
@@ -93,7 +78,6 @@ class Prediction(Base):
     split = cleanedSentence.split()
     batch = []
     final = []
-    #print('the split is ', split)
     for word in split:
       matrix = []
       if word:
@@ -101,15 +85,9 @@ class Prediction(Base):
             word_vector = em.where('word', word).first().vector
         else:
             word_vector.append([0] * 300)
-        #word_vector = em.where('word', word).first().vector
-        # print('each work corresponding vector ----', word, word_vector)
-        # print('\n')
-        #print('each work of sentence corresponding vector is ', len(word_vector))
         matrix.append(word_vector)
-        #print('The shape is ', len(matrix))
       else:
         matrix.append([0] * 300)
-    # print('The shape of matrix is ', len(matrix))
     for l in range(len(matrix), TrainingSet.maxSentenceLen()):
       matrix.append([0] * 300)
     for i in range(1,batchSize+1):

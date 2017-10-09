@@ -15,5 +15,4 @@ class PredictionController(Resource):
   def post(self):
     sentence = request.values.get('demo')
     result = output(sentence)
-    
     return {'Input sentence :': sentence,'Probability':str(result[0]).strip(','),'Label': str(result[1])}
