@@ -3,7 +3,7 @@ from datetime import datetime
 from app.config import redis
 import numpy as np
 import pickle
-from .vector import Vector
+#from .vector import Vector
 class Base():
   def vector2matrix(self, training_set_ids):
     v = Vector()
