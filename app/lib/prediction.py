@@ -50,6 +50,7 @@ class Prediction(Base):
     prediction_result  = []
     final_result = ''
     with tf.Session(graph = graph) as sess:
+        sess.run(tf.global_variables_initializer())
         ckpt = tf.train.get_checkpoint_state('logs')
         if ckpt and tf.gfile.Exists('logs'):
             print('Start load model')

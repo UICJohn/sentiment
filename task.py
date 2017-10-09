@@ -4,6 +4,7 @@ from app.lib import Trainer
 from app.config import GPU_NUMS
 from kombu.common import Broadcast
 from app.lib import Prediction
+from app.lib import Tester
 
 celery = init_celery(sentiment_app)
 celery.conf.task_routes = {
@@ -39,3 +40,10 @@ def output(sentence):
   
   label = Prediction.process(sentence)
   return label
+
+@celery.task()
+def test():
+  print("############### Starting to test")
+  Tester.process()
+  # test_size, correct_size, incorrect_size, accuracy = Tester.process()
+  # return [test_size, correct_size, incorrect_size, accuracy]

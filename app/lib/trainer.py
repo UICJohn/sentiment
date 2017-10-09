@@ -40,7 +40,7 @@ class Trainer(Base):
       #Input
       input_data = tf.placeholder(tf.float32, [batchSize, TrainingSet.maxSentenceLen(), 300], name = 'input_placeholder')
       labels = tf.placeholder(tf.float32, [batchSize, numClasses], name = 'labels_placeholder')
-
+      
       print("global step")
       #global_step
       global_step = tf.contrib.framework.get_or_create_global_step()
