@@ -8,6 +8,8 @@ from ..config import batchSize, redis
 from .. import db_conn
 from ..config import batchSize, numClasses, lstmUnits, cluster_spec, max_epoch
 from .batch import Batch
+from os import listdir
+from os.path import isfile, join
 import datetime
 import numpy as np
 
@@ -55,22 +57,31 @@ class Tester(Base):
   @classmethod
   def __getTestMatrix(self):
     print('Preparing test data')
-    self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/neg')
+    self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/neg/')
 
 
   @classmethod
   def eachFile(self,filePath):
-    pathDir = os.listdir(filePath)
-    num = 0;
-    for allDir in pathDir:
+    num = 0
+    files = [filePath + f for f in listdir(filePath) if isfile(join(filePath, f))]
+    for f in files:
       num = num + 1
-      child = os.path.join('%s%s'%(filePath, allDir))
-      print('==========================', allDir)
-      print('---------------', child)
-      print('===========================', open(child))
-      #print('The input txt is ', self.readFile(allDir))
-    #print('===========================', open('0_2.txt'))
-    print('file number is ', num)
+      with open(f, "r", encoding = 'utf-8') as f:
+        line = f.readline()
+        line = self.__cleanSentences(line)
+        print('-----------------------', line)
+    print('The file number is ', num)
+    # pathDir = os.listdir(filePath)
+    # num = 0;
+    # for allDir in pathDir:
+    #   num = num + 1
+    #   child = os.path.join('%s%s'%(filePath, allDir))
+    #   print('==========================', allDir)
+    #   print('---------------', child)
+    #   print('===========================', open(child).read())
+    #   #print('The input txt is ', self.readFile(allDir))
+    # #print('===========================', open('0_2.txt'))
+    # print('file number is ', num)
 
   # @classmethod
   # def readFile(self,filename):
