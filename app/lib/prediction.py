@@ -77,18 +77,22 @@ class Prediction(Base):
     cleanedSentence = self.__cleanSentences(string)
     print('-----------------', cleanedSentence)
     split = cleanedSentence.split()
+    print('-----------------', split)
     batch = []
     final = []
     for word in split:
       matrix = []
+      print('==========',word)
       if word:
         if em.where('word', word).first():
+            print('==========',word)
             word_vector = em.where('word', word).first().vector
         else:
             word_vector.append([0] * 300)
         matrix.append(word_vector)
       else:
         matrix.append([0] * 300)
+    print('++++++++++++++++++++++++++', len(matrix[0]))
     for l in range(len(matrix), TrainingSet.maxSentenceLen()):
       matrix.append([0] * 300)
     for i in range(1,batchSize+1):
