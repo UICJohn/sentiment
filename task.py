@@ -46,7 +46,6 @@ def init_redis():
 @celery.task()
 def output(sentence):
   print("############### Starting run predict", sentence)
-  
   label, probability_value = Prediction.process(sentence)
   return label, probability_value
 

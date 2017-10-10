@@ -48,7 +48,6 @@ class Tester(Base):
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       train_step = (tf.train.AdamOptimizer().minimize(loss, global_step = global_step))
       saver = tf.train.Saver()
-
     test_data = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/Postive_kayla/')
 
     print("line 61 -------------  ", len(test_data))
@@ -137,14 +136,13 @@ class Tester(Base):
               batch.append(matrix)
             test_data.append(batch)
     return test_data
-   
+
   @classmethod
   def __cleanSentences(self, string):
     strip_special_chars = re.compile("[^A-Za-z0-9 ]+")
     string = string.lower().replace("<br />", " ")
     string = re.sub(strip_special_chars, "", string.lower())
     return string
-
 
   @classmethod
   def __drawGraph(self, prediction_result, name):
@@ -158,8 +156,3 @@ class Tester(Base):
     plt.legend()
     plt.plot()
     plt.savefig(name)
-
-
-
-
-

@@ -20,9 +20,8 @@ class Prediction(Base):
 
   @classmethod
   def process(self, sentence):
-    print("Coming into prediction prcess")
+    # print("Coming into prediction prcess")
     test_data = self.__getSentenceMatrix(sentence)
-    #print("-=====================", test_data.shape)
     graph = tf.Graph()
 
     with graph.as_default():
@@ -35,7 +34,7 @@ class Prediction(Base):
         global_step = tf.contrib.framework.get_or_create_global_step()
 
         lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob= 1)
+        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
         outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
         outputs = tf.transpose(outputs, [1, 0, 2])
@@ -50,7 +49,6 @@ class Prediction(Base):
 
     prediction_result  = []
     final_result = ''
-
     temp_label = []
     for i in range(0,24):
         a = [1,0,0]
@@ -113,70 +111,6 @@ class Prediction(Base):
         batch.append(matrix)
 
     return batch
-
-  # @classmethod
-  # def __getSentenceMatrix(self, string):
-  #   cleanedSentence = self.__cleanSentences(string)
-  #   print('-----------------', cleanedSentence)
-  #   split = cleanedSentence.split()
-  #   print('-----------------', split)
-  #   batch = []
-  #   final = []
-  #   matrix = []
-  #   word_vector = []
-  #   for word in split:
-  #       print('Coming in word in split')
-  #       print(word)
-  #       if word:
-  #           print('Coming in if word:')
-  #           if em.where('word', word).first():
-  #               print('Could find word in embedding matrix')
-  #               word_vector = em.where('word', word).first().vector
-
-  #           else:
-  #               print('Could not find word in embedding matrix')
-  #               word_vector.append([0] * 300)     
-  #       else:
-  #           print('No word Null')
-  #   matrix.append(word_vector)
-  #   if len(split) >= TrainingSet.maxSentenceLen():
-  #       print('The lenghth of input text >>>>>>>>>>> Max Sentence length')
-  #       matrix = matrix[0:TrainingSet.maxSentenceLen()]
-  #       for i in range(1,batchSize+1):
-  #           batch.append(matrix)
-  #   else:
-  #       print('The lenghth of input text <<<<<<<<<<< Max Sentence length')
-  #       for l in range(len(matrix), TrainingSet.maxSentenceLen()):
-  #           matrix.append([0] * 300)
-  #       for i in range(1,batchSize+1):
-  #           batch.append(matrix)
-  #   return batch
-  # @classmethod
-  # def __getSentenceMatrix(self, string):
-  #   cleanedSentence = self.__cleanSentences(string)
-  #   print('-----------------', cleanedSentence)
-  #   split = cleanedSentence.split()
-  #   print('-----------------', split)
-  #   batch = []
-  #   final = []
-  #   for word in split:
-  #     matrix = []
-  #     print('==========',word)
-  #     if word:
-  #       if em.where('word', word).first():
-  #           print('==========',word)
-  #           word_vector = em.where('word', word).first().vector
-  #       else:
-  #           word_vector.append([0] * 300)
-  #       matrix.append(word_vector)
-  #     else:
-  #       matrix.append([0] * 300)
-  #   print('++++++++++++++++++++++++++', len(matrix[0]))
-  #   for l in range(len(matrix), TrainingSet.maxSentenceLen()):
-  #     matrix.append([0] * 300)
-  #   for i in range(1,batchSize+1):
-  #       batch.append(matrix)
-  #   return batch
 
   @classmethod
   def __cleanSentences(self, string):
