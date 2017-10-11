@@ -35,7 +35,7 @@ class TrainingSetTable(Seeder):
 		with open(fname) as f:
 			for line in f:
 				words = self.stringClean(line)
-				if(len(words.split("")) < 500):
+				if(len(words.split(" ")) < 500):
 					if not ts.where("words", words).first():
 						ts.insert({ "words": words, "label": label, "word_ids": self.word2Id(words)})
 						if(label == 1):
