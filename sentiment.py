@@ -13,4 +13,4 @@ sentiment_api.add_resource(TestingController, '/testing')
 
 if __name__ == '__main__':
   redis.flushdb()
-	sentiment_app.run(host='0.0.0.0')
+  sentiment_app.run(host='0.0.0.0')
