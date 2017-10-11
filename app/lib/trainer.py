@@ -60,7 +60,7 @@ class Trainer(Base):
       #define loss and accuracy
       outputs = tf.transpose(outputs, [1, 0, 2])
       last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
-      prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
+      prediction = (tf.matmul(last, weight) + bias)
       tf.add_to_collection('pred_network', prediction)
       correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
       accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
