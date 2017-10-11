@@ -5,6 +5,7 @@ from ..config import redis
 from ..config import batchSize, numClasses, lstmUnits, cluster_spec, max_epoch
 from .batch import Batch
 import tensorflow as tf
+import datetime
 import numpy as np
 from .task_control import TaskControl
 import os
@@ -83,3 +84,19 @@ class Trainer(Base):
               print("Task: %d - Step: %d" % (self.task_index, step_count))
             step_count += 1
           print("%d Training Done" % self.task_index)
+
+
+  # def __createTensorBoard(self):
+  #   tf.summary.scalar('Loss', loss)
+  #   tf.summary.scalar('Accuracy', accuracy)
+  #   merged = tf.summary.merge_all()
+  #   logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+  #   writer = tf.summary.FileWriter(logdir, sess.graph)
+  #   #Write summary to Tensorboard
+  #   summary = sess.run(merged, {input_data: nextBatch, labels: nextBatchLabels})
+  #   writer.add_summary(summary,i)
+  #   writer.close()
+
+
+
+
