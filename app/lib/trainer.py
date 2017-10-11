@@ -73,15 +73,10 @@ class Trainer(Base):
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), config=tf.ConfigProto(log_device_placement=True), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
           while not sess.should_stop():
-            if(self.task_index == 0):
-              print("Start Dequeue Task %d" % self.task_index)
             training_set_ids = Batch.dequeue()
             data, data_labels = self.vector2matrix(training_set_ids)
-            if(self.task_index == 0):
-              print("End Dequeue Task %d" % self.task_index)
             sess.run(op, {input_data: data, labels: data_labels})
-            if(self.task_index == 0):
-              print("Task: %d - Step: %d" % (self.task_index, step_count))
+            print("Task: %d - Step: %d" % (self.task_index, step_count))
             step_count += 1
           print("%d Training Done" % self.task_index)
 

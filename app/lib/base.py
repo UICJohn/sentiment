@@ -21,5 +21,4 @@ class Base():
       data.append(matrix)
       labels.append(label)
     end_at = datetime.now()
-    print("RUN TIME: %dms" % int((end_at-start_at).total_seconds() * 1000.0) )
     return [data, labels]
