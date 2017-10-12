@@ -20,8 +20,9 @@ class Prediction(Base):
 
   @classmethod
   def process(self, sentence):
-    # print("Coming into prediction prcess")
+    print("Coming into prediction prcess")
     test_data = self.__getSentenceMatrix(sentence)
+    #print("-=====================", test_data.shape)
     graph = tf.Graph()
 
     with graph.as_default():
@@ -40,7 +41,9 @@ class Prediction(Base):
         outputs = tf.transpose(outputs, [1, 0, 2])
         last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
 
-        prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
+        prediction = tf.matmul(last, weight) + bias
+        #prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
+        #prediction = tf.reshape(prediction, [-1, TrainingSet.maxSentenceLen(), numClasses])
         correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
         accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
@@ -49,29 +52,43 @@ class Prediction(Base):
 
     prediction_result  = []
     final_result = ''
+
+    temp_label = []
+    for i in range(0,24):
+        a = [1,0,0]
+        temp_label.append(a)
+
     with tf.Session(graph = graph) as sess:
         sess.run(tf.global_variables_initializer())
         ckpt = tf.train.get_checkpoint_state('logs')
+        probability_value = 0
         if ckpt and tf.gfile.Exists('logs'):
             print('Start load model')
             saver.restore(sess, ckpt.model_checkpoint_path)
+
+            print('------------------ accuracy', sess.run(last, {input_data:test_data}))
             predictedSentiment = sess.run(prediction, {input_data:test_data})[0]
-            print('====================================', predictedSentiment)
-            if (predictedSentiment[0])>(predictedSentiment[2]):
+            print('====================================', sess.run(prediction, {input_data:test_data}))
+            if predictedSentiment[0]> predictedSentiment[2]:
                 print("Positive value is ", predictedSentiment[0])
                 final_result = 'Positive'
-                prediction_result.append(predictedSentiment)
-                prediction_result.append('Positive')
+                #prediction_result.append(predictedSentiment)
+                probability_value = predictedSentiment[0]
+                #prediction_result.append('Positive')
             else:
-                prediction_result.append(predictedSentiment)
-                prediction_result.append('Negative')
+                print("Negative value is ", predictedSentiment[2])
+                #prediction_result.append(predictedSentiment)
+                #print("Positive value is ", predictedSentiment[2])
+                probability_value = predictedSentiment[2]
+                #prediction_result.append('Negative')
                 final_result = 'Negative'
 
         else:
-            print('no checkpoint found')
+            print('no checkpoint found') 
             return
-    return prediction_result
 
+    return final_result,probability_value
+  
   @classmethod
   def __getSentenceMatrix(self, string):
     cleanedSentence = self.__cleanSentences(string)
@@ -80,24 +97,62 @@ class Prediction(Base):
     print('-----------------', split)
     batch = []
     final = []
+    matrix = []
+    word_vector = []
     for word in split:
-      matrix = []
-      print('==========',word)
-      if word:
-        if em.where('word', word).first():
-            print('==========',word)
-            word_vector = em.where('word', word).first().vector
+        print('Coming in word in split')
+        print(word)
+        if word:
+            print('Coming in if word:')
+            if em.where('word', word).first():
+                print('Could find word in embedding matrix')
+                word_vector = em.where('word', word).first().vector
+
+            else:
+                print('Could not find word in embedding matrix')
+                word_vector.append([0] * 300)
+            
         else:
-            word_vector.append([0] * 300)
-        matrix.append(word_vector)
-      else:
-        matrix.append([0] * 300)
-    print('++++++++++++++++++++++++++', len(matrix[0]))
-    for l in range(len(matrix), TrainingSet.maxSentenceLen()):
-      matrix.append([0] * 300)
-    for i in range(1,batchSize+1):
-        batch.append(matrix)
+            print('No word Null')
+    matrix.append(word_vector)
+    if len(split) >= TrainingSet.maxSentenceLen():
+        print('The lenghth of input text >>>>>>>>>>> Max Sentence length')
+        matrix = matrix[0:TrainingSet.maxSentenceLen()]
+        for i in range(1,batchSize+1):
+            batch.append(matrix)
+    else:
+        print('The lenghth of input text <<<<<<<<<<< Max Sentence length')
+        for l in range(len(matrix), TrainingSet.maxSentenceLen()):
+            matrix.append([0] * 300)
+        for i in range(1,batchSize+1):
+            batch.append(matrix)
     return batch
+  # @classmethod
+  # def __getSentenceMatrix(self, string):
+  #   cleanedSentence = self.__cleanSentences(string)
+  #   print('-----------------', cleanedSentence)
+  #   split = cleanedSentence.split()
+  #   print('-----------------', split)
+  #   batch = []
+  #   final = []
+  #   for word in split:
+  #     matrix = []
+  #     print('==========',word)
+  #     if word:
+  #       if em.where('word', word).first():
+  #           print('==========',word)
+  #           word_vector = em.where('word', word).first().vector
+  #       else:
+  #           word_vector.append([0] * 300)
+  #       matrix.append(word_vector)
+  #     else:
+  #       matrix.append([0] * 300)
+  #   print('++++++++++++++++++++++++++', len(matrix[0]))
+  #   for l in range(len(matrix), TrainingSet.maxSentenceLen()):
+  #     matrix.append([0] * 300)
+  #   for i in range(1,batchSize+1):
+  #       batch.append(matrix)
+  #   return batch
 
   @classmethod
   def __cleanSentences(self, string):

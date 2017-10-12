@@ -38,8 +38,8 @@ def create_batch():
 def output(sentence):
   print("############### Starting run predict", sentence)
   
-  label = Prediction.process(sentence)
-  return label
+  label, probability_value = Prediction.process(sentence)
+  return label, probability_value
 
 @celery.task()
 def test():
