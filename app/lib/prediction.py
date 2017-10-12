@@ -35,7 +35,7 @@ class Prediction(Base):
         global_step = tf.contrib.framework.get_or_create_global_step()
 
         lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
+        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob= 1)
         outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
         outputs = tf.transpose(outputs, [1, 0, 2])
@@ -67,7 +67,7 @@ class Prediction(Base):
             saver.restore(sess, ckpt.model_checkpoint_path)
 
             print('------------------ accuracy', sess.run(last, {input_data:test_data}))
-            predictedSentiment = sess.run(prediction, {input_data:test_data})[0]
+            predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data:test_data})[0]
             print('====================================', sess.run(prediction, {input_data:test_data}))
             if predictedSentiment[0]> predictedSentiment[2]:
                 print("Positive value is ", predictedSentiment[0])
