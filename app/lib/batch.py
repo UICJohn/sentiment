@@ -13,7 +13,6 @@ class Batch(Base):
       training_set_count = int(TrainingSet.count()/batchSize)
       for j in range(0, max_epoch):
         for i in range(0, training_set_count):
-          print("TrainingSet Count: %d" % i)
           training_sets = TrainingSet.select("id", "word_ids").paginate(batchSize, i)
           ids_arr = [training_set.id for training_set in training_sets]
           q.push(ids_arr)

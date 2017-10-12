@@ -68,7 +68,8 @@ class Trainer(Base):
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       op = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
       for i in range(0, max_epoch):
-        print("run graph")
+        if(self.task_index == 0):
+          print("CURRENT EPOCH: %d" % i)
         hooks=[tf.train.StopAtStepHook(last_step = 1000 * (i + 1))]
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), config=tf.ConfigProto(log_device_placement=True), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
@@ -76,7 +77,6 @@ class Trainer(Base):
             training_set_ids = Batch.dequeue()
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
-            print("Task: %d - Step: %d" % (self.task_index, step_count))
             step_count += 1
           print("%d Training Done" % self.task_index)
 
