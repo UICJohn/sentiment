@@ -42,8 +42,6 @@ class Prediction(Base):
         last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
 
         prediction = tf.matmul(last, weight) + bias
-        #prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
-        #prediction = tf.reshape(prediction, [-1, TrainingSet.maxSentenceLen(), numClasses])
         correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
         accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
@@ -87,7 +85,7 @@ class Prediction(Base):
             print('no checkpoint found') 
             return
 
-    return final_result,probability_value
+    return final_result,probability_value 
   
   @classmethod
   def __getSentenceMatrix(self, string):
@@ -110,8 +108,7 @@ class Prediction(Base):
 
             else:
                 print('Could not find word in embedding matrix')
-                word_vector.append([0] * 300)
-            
+                word_vector.append([0] * 300)     
         else:
             print('No word Null')
     matrix.append(word_vector)

@@ -42,7 +42,7 @@ class Tester(Base):
       outputs = tf.transpose(outputs, [1, 0, 2])
       last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
 
-      prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
+      prediction = tf.matmul(last, weight) + bias
       correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
       accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
@@ -56,10 +56,15 @@ class Tester(Base):
     # numFiles = len(numWords)
     
     #test_data_neg, test_data_pos = self.__getTestMatrix()
-    test_data_neg = self.__getTestMatrix()
-    neg_files = test_data_neg[2]
-    #pos_files = test_data_pos[2]
-    print("========================  ", len(test_data_neg[1][0]))
+    #test_data = self.__getTestMatrix('/Users/chih/Documents/IOS/dev_sentiment/sentiment/neg/')
+    test_data = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/pos/')
+
+    print("line 61 -------------  ", len(test_data))
+    #print("line 62 -------------  ", test_data[1])
+    #print('\n')
+    #print("line 62 -------------  ", len(test_data[1]))
+    #print('line 62 ++++++++++++++++', len(test_data[1]))
+    #print('line 63 ================', test_data[0][0])
     correct_result  = []
     incorrect_result = []
     prediction_result = []
@@ -71,21 +76,22 @@ class Tester(Base):
         if ckpt and tf.gfile.Exists('logs'):
             print('Start load model')
             saver.restore(sess, ckpt.model_checkpoint_path)
-            for i in range(0,len(test_data_neg[1])):
-                predictedSentiment = sess.run(prediction, {input_data:test_data_neg[1][i]})[0]
-                if (predictedSentiment[0])>(predictedSentiment[2]):
-                    prediction_result.append(1)
-                    incorrect_result.append(-1)
-                else:
-                    prediction_result.append(-1)
-                    correct_result.append(1)
+            for i in range(0,len(test_data)):
+              temp_input = test_data[i]
+              predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data:test_data[i]})[0]
+              if (predictedSentiment[0])>(predictedSentiment[2]):
+                print('The line 83 --------------------', predictedSentiment)
+
+                prediction_result.append(-1)
+              else:
+                print('The line 87 --------------------', predictedSentiment)
+                prediction_result.append(1)
         else:
             print('no checkpoint found') 
             return
-    print("correct files is -----", len(correct_result))
-    print("incorrect files is -----", len(incorrect_result))
-    print("total files is  -------", len(prediction_result))
-    self.__drawGraph([len(correct_result)/ 800, len(correct_result)/800], 'neg_result_.png')
+    print("total files is  -------", prediction_result)
+    print('Negative label is ', prediction_result.count(1))
+    #self.__drawGraph([len(correct_result)/ 800, len(correct_result)/800], 'neg_result_.png')
 
 
     # Describe sequence length
@@ -108,13 +114,13 @@ class Tester(Base):
     # plt.savefig('test_pos_files.png')
     # self.__drawGraph([80,30,40,50])
 
-    print("================================= start to save files")
+    #print("================================= start to save files")
     #np.save("test_matrix_neg.npy",test_data_neg[0])
-    print("================================= Done to save neg")
+    #print("================================= Done to save neg")
     #np.save("test_matrix_label_neg.npy", test_data_neg[1])
     #np.save("test_matrix_pos.npy",test_data_pos[0])
     #np.save("test_matrix_label_pos.npy", test_data_pos[1])
-    print('Done to save test data')
+    #print('Done to save test data')
     # with tf.Session(graph = graph) as sess:
     #   sess.run(tf.global_variables_initializer())
     #   ckpt = tf.train.get_checkpoint_state('logs')
@@ -131,64 +137,111 @@ class Tester(Base):
 
 
 
-  @classmethod
-  def __getTestMatrix(self):
-    print('Preparing test data')
-    neg_data_set = []
-    pos_data_set = []
-    test_data_neg, labels_neg,numWords_neg = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/neg/')
-    neg_data_set.append(test_data_neg)
-    neg_data_set.append(labels_neg)
-    neg_data_set.append(numWords_neg)
-    print('=========', len(test_data_neg))
-
-    # test_data_pos, labels_pos,numWords_pos = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/pos/')
-    # pos_data_set.append(test_data_pos)
-    # pos_data_set.append(labels_pos)
-    # pos_data_set.append(numWords_pos)
-    # print('=========', len(test_data_pos))
-    return neg_data_set
-    #return pos_data_set, neg_data_set
+  # @classmethod
+  # def __getTestMatrix(self, data_path):
+  #   print('Preparing test data')
+  #   test_data,numWords = self.eachFile(data_path)
+  #   return test_data
 
   @classmethod
-  def eachFile(self,filePath):
+  def eachFile(self, filePath):
     num = 0
     test_data = []
-    batch = []
+    #batch = []
     files = [filePath + f for f in listdir(filePath) if isfile(join(filePath, f))]
     labels = []
     numWords = []
     for f in files:
       num = num + 1
-      if (num < 2):
+      if num < 1001:
+        print(f)
         with open(f, "r", encoding = 'utf-8') as f:
+          #read each file
           line = f.readline()
           line = self.__cleanSentences(line)
+          #print('line 162-----------------', line)
           split = line.split()
+          #print('line 163______________', split)
+          matrix = []
           counter = len(split)
           numWords.append(counter)
-          print("____________", split)
-          for word in split:
-            matrix = []
+          
+          for word in split:#convert one text to word matrix // each matrix contains word vector of each wrod in one text file 
+            #print("Coming in if word :")
+            #print(word)
             if word:
-              if em.where('word',word).first():
+              #print('Coming in if word:')
+              if em.where('word', word).first():
+                #print('Could find word in embedding matrix')
                 word_vector = em.where('word', word).first().vector
+                #print("The found word vector is ", word_vector)
                 matrix.append(word_vector)
-                print("each word is ", word_vector)
               else:
-                word_vector.append([0] * 300)
-              matrix.append(word_vector)
-            else:
+                #print('Could not find word in embedding matrix')
+                #word_vector.append([0] * 300)
+                matrix.append([0] * 300)
+                #print("Couldn't found word vector is ", word_vector)
+          #matrix.append(word_vector)
+
+          if len(split) >= TrainingSet.maxSentenceLen():
+            #print('The length of input text >>>>>>>>>>>>>>>>>>>>>>>> Max Sentence length')
+            matrix = matrix[0: TrainingSet.maxSentenceLen()]
+            batch =[]
+            for i in range(0, batchSize):
+              batch.append(matrix)
+            test_data.append(batch)
+          else:
+            #print('The length of input text <<<<<<<<<<<<<<<<<<<<<<<< Max Sentence length')
+            for l in range(len(matrix), TrainingSet.maxSentenceLen()):
               matrix.append([0] * 300)
-          print('++++++++++++++++++++++++++', len(matrix))
-          for l in range(len(matrix), TrainingSet.maxSentenceLen()):
-            matrix.append([0] * 300)
-          for i in range(1,batchSize+1):
-            batch.append(matrix)
-            labels.append([0,0,1])
-          test_data.append(batch)
-        print('The num is', num)
-    return test_data, labels, numWords
+              batch =[]
+            for i in range(0,batchSize):
+              #print('-------------------------------------    199 i is ', i)
+              batch.append(matrix)
+            test_data.append(batch)
+            #print("Line 201 batch size is ", len(batch))
+            #print("Line 193 batch size is ", len(batch))
+    return test_data
+   
+  # @classmethod
+  # def eachFile(self,filePath):
+  #   num = 0
+  #   test_data = []
+  #   batch = []
+  #   files = [filePath + f for f in listdir(filePath) if isfile(join(filePath, f))]
+  #   labels = []
+  #   numWords = []
+  #   for f in files:
+  #     num = num + 1
+  #     if (num < 2):
+  #       with open(f, "r", encoding = 'utf-8') as f:
+  #         line = f.readline()
+  #         line = self.__cleanSentences(line)
+  #         split = line.split()
+  #         counter = len(split)
+  #         numWords.append(counter)
+  #         print("____________", split)
+  #         for word in split:
+  #           matrix = []
+  #           if word:
+  #             if em.where('word',word).first():
+  #               word_vector = em.where('word', word).first().vector
+  #               matrix.append(word_vector)
+  #               print("each word is ", word_vector)
+  #             else:
+  #               word_vector.append([0] * 300)
+  #             matrix.append(word_vector)
+  #           else:
+  #             matrix.append([0] * 300)
+  #         print('++++++++++++++++++++++++++', len(matrix))
+  #         for l in range(len(matrix), TrainingSet.maxSentenceLen()):
+  #           matrix.append([0] * 300)
+  #         for i in range(1,batchSize+1):
+  #           batch.append(matrix)
+  #           labels.append([0,0,1])
+  #         test_data.append(batch)
+  #       print('The num is', num)
+  #   return test_data, labels, numWords
 
 
   @classmethod
