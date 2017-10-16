@@ -82,7 +82,7 @@ class Tester(Base):
               if (predictedSentiment[0])>(predictedSentiment[2]):
                 print('The line 83 --------------------', predictedSentiment)
 
-                prediction_result.append(-1)
+                prediction_result.append(0)
               else:
                 print('The line 87 --------------------', predictedSentiment)
                 prediction_result.append(1)
@@ -90,7 +90,7 @@ class Tester(Base):
             print('no checkpoint found') 
             return
     print("total files is  -------", prediction_result)
-    print('Negative label is ', prediction_result.count(1))
+    #print('Negative label is ', prediction_result.count(1))
     #self.__drawGraph([len(correct_result)/ 800, len(correct_result)/800], 'neg_result_.png')
 
 

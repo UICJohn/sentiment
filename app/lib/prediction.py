@@ -88,42 +88,77 @@ class Prediction(Base):
     return final_result,probability_value 
   
   @classmethod
-  def __getSentenceMatrix(self, string):
+  def __getSentenceMatrix(self,string):
     cleanedSentence = self.__cleanSentences(string)
-    print('-----------------', cleanedSentence)
+    print('-------------------------',cleanedSentence)
     split = cleanedSentence.split()
-    print('-----------------', split)
+    print('-----------', split)
     batch = []
     final = []
-    matrix = []
-    word_vector = []
     for word in split:
-        print('Coming in word in split')
-        print(word)
-        if word:
-            print('Coming in if word:')
-            if em.where('word', word).first():
-                print('Could find word in embedding matrix')
-                word_vector = em.where('word', word).first().vector
-
-            else:
-                print('Could not find word in embedding matrix')
-                word_vector.append([0] * 300)     
+      print('Coming in word in split')
+      if word:
+        if em.where('word',word).first():
+          print('Could find word in embedding matrix')
+          word_vector = em.where('word',word).first().vector
+          matrix.append(word_vector)
         else:
-            print('No word Null')
-    matrix.append(word_vector)
+          matrix.append([0] * 300)
     if len(split) >= TrainingSet.maxSentenceLen():
-        print('The lenghth of input text >>>>>>>>>>> Max Sentence length')
-        matrix = matrix[0:TrainingSet.maxSentenceLen()]
-        for i in range(1,batchSize+1):
-            batch.append(matrix)
+      matrix = matrix[0:TrainingSet.maxSentenceLen]
+      for i in range(0,batchSize):
+        batch.append(matrix)
     else:
-        print('The lenghth of input text <<<<<<<<<<< Max Sentence length')
-        for l in range(len(matrix), TrainingSet.maxSentenceLen()):
-            matrix.append([0] * 300)
-        for i in range(1,batchSize+1):
-            batch.append(matrix)
+      for l in range(len(matrix), TrainingSet.maxSentenceLen()):
+        matrix.append([0] * 300)
+      for i in range(0,batchSize):
+        batch.append(matrix)
+
     return batch
+
+
+          
+
+
+
+    
+  # @classmethod
+  # def __getSentenceMatrix(self, string):
+  #   cleanedSentence = self.__cleanSentences(string)
+  #   print('-----------------', cleanedSentence)
+  #   split = cleanedSentence.split()
+  #   print('-----------------', split)
+  #   batch = []
+  #   final = []
+  #   matrix = []
+  #   word_vector = []
+  #   for word in split:
+  #       print('Coming in word in split')
+  #       print(word)
+  #       if word:
+  #           print('Coming in if word:')
+  #           if em.where('word', word).first():
+  #               print('Could find word in embedding matrix')
+  #               word_vector = em.where('word', word).first().vector
+
+  #           else:
+  #               print('Could not find word in embedding matrix')
+  #               word_vector.append([0] * 300)     
+  #       else:
+  #           print('No word Null')
+  #   matrix.append(word_vector)
+  #   if len(split) >= TrainingSet.maxSentenceLen():
+  #       print('The lenghth of input text >>>>>>>>>>> Max Sentence length')
+  #       matrix = matrix[0:TrainingSet.maxSentenceLen()]
+  #       for i in range(1,batchSize+1):
+  #           batch.append(matrix)
+  #   else:
+  #       print('The lenghth of input text <<<<<<<<<<< Max Sentence length')
+  #       for l in range(len(matrix), TrainingSet.maxSentenceLen()):
+  #           matrix.append([0] * 300)
+  #       for i in range(1,batchSize+1):
+  #           batch.append(matrix)
+  #   return batch
   # @classmethod
   # def __getSentenceMatrix(self, string):
   #   cleanedSentence = self.__cleanSentences(string)
