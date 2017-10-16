@@ -64,22 +64,19 @@ class Prediction(Base):
             print('Start load model')
             saver.restore(sess, ckpt.model_checkpoint_path)
 
-            print('------------------ accuracy', sess.run(last, {input_data:test_data}))
+            #print('------------------ accuracy', sess.run(last, {input_data:test_data}))
             predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data:test_data})[0]
             print('====================================', sess.run(prediction, {input_data:test_data}))
             if predictedSentiment[0]> predictedSentiment[2]:
-                print("Positive value is ", predictedSentiment[0])
-                final_result = 'Positive'
-                #prediction_result.append(predictedSentiment)
+                # print("Positive value is ", predictedSentiment[0])
+                # final_result = 'Positive'
                 probability_value = predictedSentiment[0]
-                #prediction_result.append('Positive')
-            else:
-                print("Negative value is ", predictedSentiment[2])
-                #prediction_result.append(predictedSentiment)
-                #print("Positive value is ", predictedSentiment[2])
-                probability_value = predictedSentiment[2]
-                #prediction_result.append('Negative')
+                #print('Negative value is ')
                 final_result = 'Negative'
+            else:
+                #print("Negative value is ", predictedSentiment[2])
+                probability_value = predictedSentiment[2]
+                final_result = 'Positive'
 
         else:
             print('no checkpoint found') 
@@ -95,6 +92,7 @@ class Prediction(Base):
     print('-----------', split)
     batch = []
     final = []
+    matrix = []
     for word in split:
       print('Coming in word in split')
       if word:
@@ -116,12 +114,6 @@ class Prediction(Base):
 
     return batch
 
-
-          
-
-
-
-    
   # @classmethod
   # def __getSentenceMatrix(self, string):
   #   cleanedSentence = self.__cleanSentences(string)
