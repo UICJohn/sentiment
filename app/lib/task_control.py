@@ -19,3 +19,8 @@ class TaskControl():
       if redis.get(self.task_type + "_index"):
         task_index = int(redis.get(self.task_type + "_index"))
     return task_index
+
+  @classmethod
+  def clean_up_task(cls):
+    redis.set("worker_index", 0)
+    redis.set("ps_index", 0)
