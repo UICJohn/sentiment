@@ -36,7 +36,7 @@ class Tester(Base):
       global_step = tf.contrib.framework.get_or_create_global_step()
 
       lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-      lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
+      lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=1)
       outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
       outputs = tf.transpose(outputs, [1, 0, 2])
@@ -48,7 +48,7 @@ class Tester(Base):
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       train_step = (tf.train.AdamOptimizer().minimize(loss, global_step = global_step))
       saver = tf.train.Saver()
-    test_data = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/Postive_kayla/')
+    test_data = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/Neg_kayla/')
 
     print("line 61 -------------  ", len(test_data))
 
@@ -67,11 +67,11 @@ class Tester(Base):
               temp_input = test_data[i]
               predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data:test_data[i]})[0]
               if (predictedSentiment[0])>(predictedSentiment[2]):
-                #print('The line 83 --------------------', predictedSentiment)
+                print('The line 83 --------------------', predictedSentiment)
 
                 prediction_result.append(0)
               else:
-                #print('The line 87 --------------------', predictedSentiment)
+                print('The line 87 --------------------', predictedSentiment)
                 prediction_result.append(1)
         else:
             print('no checkpoint found') 
@@ -89,7 +89,7 @@ class Tester(Base):
     numWords = []
     for f in files:
       num = num + 1
-      if num < 81:
+      if num < 16:
         print(f)
         with open(f, "r", encoding = 'utf-8') as f:
           #read each file

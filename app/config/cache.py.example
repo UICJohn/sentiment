@@ -1,0 +1,17 @@
+import redis
+remote_redis_host = "172.31.5.192"
+remote_redis_port = 6379
+
+cachy = redis.Redis(
+  host = redis_host,
+  port = redis_port,
+  password = '',
+  db = 0
+)
+
+vectors_redis = redis.Redis(
+  host = 'localhost',
+  port = 6379,
+  password = '',
+  db = 1
+)

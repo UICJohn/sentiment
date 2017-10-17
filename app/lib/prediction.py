@@ -20,7 +20,7 @@ class Prediction(Base):
 
   @classmethod
   def process(self, sentence):
-    # print("Coming into prediction prcess")
+    print("Coming into prediction prcess")
     test_data = self.__getSentenceMatrix(sentence)
     graph = tf.Graph()
 
@@ -34,7 +34,7 @@ class Prediction(Base):
         global_step = tf.contrib.framework.get_or_create_global_step()
 
         lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
+        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=1)
         outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
         outputs = tf.transpose(outputs, [1, 0, 2])
@@ -49,10 +49,7 @@ class Prediction(Base):
 
     prediction_result  = []
     final_result = ''
-    temp_label = []
-    for i in range(0,24):
-        a = [1,0,0]
-        temp_label.append(a)
+
 
     with tf.Session(graph = graph) as sess:
         sess.run(tf.global_variables_initializer())
@@ -90,7 +87,7 @@ class Prediction(Base):
     print('-----------', split)
     batch = []
     final = []
-    matrix = []
+    matrix = []   
     for word in split:
       print('Coming in word in split')
       if word:
