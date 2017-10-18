@@ -33,31 +33,18 @@ class Trainer(Base):
   def __process_graph(self, server, cluster):
     with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:"+str(self.task_index), cluster=cluster)):
       #create graph
-      print("create graph")
       weight = tf.Variable(tf.truncated_normal([lstmUnits, numClasses]))
       bias = tf.Variable(tf.constant(0.1, shape=[numClasses]))
-      
-      print("create input")
       #Input
       input_data = tf.placeholder(tf.float32, [batchSize, TrainingSet.maxSentenceLen(), 300], name = 'input_placeholder')
       labels = tf.placeholder(tf.float32, [batchSize, numClasses], name = 'labels_placeholder')
-      
-      print("global step")
       #global_step
       global_step = tf.contrib.framework.get_or_create_global_step()
-
-      print("initial lstm cell")
       #initial lstm cell
       lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
       lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
-
-      print("Done graph")
       #finalize graph
       outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
-
-      print("Done save graph")
-
-      print("loss and accuracy")
       #define loss and accuracy
       outputs = tf.transpose(outputs, [1, 0, 2])
       last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
@@ -78,7 +65,6 @@ class Trainer(Base):
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
-          print("%d Training Done" % self.task_index)
 
 
   # def __createTensorBoard(self):
