@@ -65,7 +65,6 @@ class Trainer(Base):
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
-<<<<<<< HEAD
           print("%d Training Done" % self.task_index)
           tf.summary.scalar('Loss', loss)
           tf.summary.scalar('Accuracy', accuracy)
@@ -75,8 +74,7 @@ class Trainer(Base):
           summary = sess.run(merged, {input_data: nextBatch, labels: nextBatchLabels})
           writer.add_summary(summary,i)
       writer.close()
-=======
->>>>>>> aefce4550720aa0dcdf9534f86844ea7d44183e0
+
 
 
 
