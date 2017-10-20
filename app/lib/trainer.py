@@ -79,18 +79,15 @@ class Trainer(Base):
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
           print("%d Training Done" % self.task_index)
+          tf.summary.scalar('Loss', loss)
+          tf.summary.scalar('Accuracy', accuracy)
+          merged = tf.summary.merge_all()
+          logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+          writer = tf.summary.FileWriter(logdir, sess.graph)
+          summary = sess.run(merged, {input_data: nextBatch, labels: nextBatchLabels})
+          writer.add_summary(summary,i)
+      writer.close()
 
-
-  # def __createTensorBoard(self):
-  #   tf.summary.scalar('Loss', loss)
-  #   tf.summary.scalar('Accuracy', accuracy)
-  #   merged = tf.summary.merge_all()
-  #   logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
-  #   writer = tf.summary.FileWriter(logdir, sess.graph)
-  #   #Write summary to Tensorboard
-  #   summary = sess.run(merged, {input_data: nextBatch, labels: nextBatchLabels})
-  #   writer.add_summary(summary,i)
-  #   writer.close()
 
 
 
