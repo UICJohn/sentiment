@@ -55,11 +55,15 @@ class Trainer(Base):
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       op = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
 
-      print("Tensorboard")
+
+      print("Tensorboard parameters")
       tf.summary.scalar('Loss', loss)
       tf.summary.scalar('Accuracy', accuracy)
+      tf.summary.scalar('OP', op)
+      tf.summary.histogram('histogram',correctPred)
+      tf.summary.scalar('Outputs', outputs)
       merged = tf.summary.merge_all()
-
+      logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
 
       for i in range(0, max_epoch):
         if(self.task_index == 0):
@@ -72,11 +76,15 @@ class Trainer(Base):
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
-          print("%d Training Done" % self.task_index)
-          
-          logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
-          writer = tf.summary.FileWriter(logdir, sess.graph)
 
+            writer = tf.summary.FileWriter(logdir, sess.graph)
+            summary = sess.run(merged, {input_data: data, labels:data_labels})
+            writer.add_summary(summary, global_step)
+          print("%d Training Done" % self.task_index)
+          writer.close()
+
+
+          writer = tf.summary.FileWriter(logdir, sess.graph)
           summary = sess.run(merged, {input_data: data, labels: data_labels})
           writer.add_summary(summary,i)
         writer.close()
