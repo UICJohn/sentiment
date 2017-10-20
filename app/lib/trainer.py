@@ -54,6 +54,13 @@ class Trainer(Base):
       accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       op = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
+
+      print("Tensorboard")
+      tf.summary.scalar('Loss', loss)
+      tf.summary.scalar('Accuracy', accuracy)
+      merged = tf.summary.merge_all()
+
+
       for i in range(0, max_epoch):
         if(self.task_index == 0):
           print("CURRENT EPOCH: %d" % i)
@@ -66,14 +73,13 @@ class Trainer(Base):
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
           print("%d Training Done" % self.task_index)
-          tf.summary.scalar('Loss', loss)
-          tf.summary.scalar('Accuracy', accuracy)
-          merged = tf.summary.merge_all()
+          
           logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
           writer = tf.summary.FileWriter(logdir, sess.graph)
-          summary = sess.run(merged, {input_data: nextBatch, labels: nextBatchLabels})
+
+          summary = sess.run(merged, {input_data: data, labels: data_labels})
           writer.add_summary(summary,i)
-      writer.close()
+        writer.close()
 
 
 
