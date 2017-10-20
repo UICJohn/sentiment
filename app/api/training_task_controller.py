@@ -7,6 +7,7 @@ from celery import group
 
 class TrainingTaskController(Resource):
   def post(self):
+    TaskControl.clean_up_task()
     create_batch.delay()
     for i in range(0, 8):
       init_worker.apply_async(countdown = 60)
