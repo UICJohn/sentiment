@@ -34,7 +34,7 @@ class Prediction(Base):
         global_step = tf.contrib.framework.get_or_create_global_step()
 
         lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.3)
+        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=1)
         outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
         outputs = tf.transpose(outputs, [1, 0, 2])
