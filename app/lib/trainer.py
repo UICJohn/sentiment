@@ -59,9 +59,8 @@ class Trainer(Base):
       print("Tensorboard parameters")
       tf.summary.scalar('Loss', loss)
       tf.summary.scalar('Accuracy', accuracy)
-      tf.summary.scalar('OP', op)
-      tf.summary.histogram('histogram',correctPred)
-      tf.summary.scalar('Outputs', outputs)
+      # tf.summary.histogram('histogram',correctPred)
+      # tf.summary.scalar('Outputs', outputs)
       merged = tf.summary.merge_all()
       logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
 
