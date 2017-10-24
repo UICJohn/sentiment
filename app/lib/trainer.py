@@ -57,13 +57,13 @@ class Trainer(Base):
 
 
       print("Tensorboard parameters")
-      tf.summary.scalar('Loss', loss)
-      tf.summary.scalar('Accuracy', accuracy)
+      # tf.summary.scalar('Loss', loss)
+      # tf.summary.scalar('Accuracy', accuracy)
       # tf.summary.scalar('OP', op)
       # tf.summary.histogram('histogram',correctPred)
       # tf.summary.scalar('Outputs', outputs)
-      merged = tf.summary.merge_all()
-      logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+      # merged = tf.summary.merge_all()
+      # logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
 
       for i in range(0, max_epoch):
         if(self.task_index == 0):
@@ -77,17 +77,17 @@ class Trainer(Base):
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
 
-            writer = tf.summary.FileWriter(logdir, sess.graph)
-            summary = sess.run(merged, {input_data: data, labels:data_labels})
-            writer.add_summary(summary, global_step)
+            # writer = tf.summary.FileWriter(logdir, sess.graph)
+            # summary = sess.run(merged, {input_data: data, labels:data_labels})
+            # writer.add_summary(summary, global_step)
           print("%d Training Done" % self.task_index)
-          writer.close()
+          # writer.close()
 
 
-          writer = tf.summary.FileWriter(logdir, sess.graph)
-          summary = sess.run(merged, {input_data: data, labels: data_labels})
-          writer.add_summary(summary,i)
-        writer.close()
+        #   writer = tf.summary.FileWriter(logdir, sess.graph)
+        #   summary = sess.run(merged, {input_data: data, labels: data_labels})
+        #   writer.add_summary(summary,i)
+        # writer.close()
 
 
 
