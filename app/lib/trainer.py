@@ -57,14 +57,14 @@ class Trainer(Base):
 
 
       print("Tensorboard parameters")
-<<<<<<< HEAD
-      tf.summary.scalar('Loss', loss)
-      tf.summary.scalar('Accuracy', accuracy)
-=======
+
+
+
+
       # tf.summary.scalar('Loss', loss)
       # tf.summary.scalar('Accuracy', accuracy)
       # tf.summary.scalar('OP', op)
->>>>>>> 676f9e9a1cec68c6763936b1ed7abe528d3b4bd2
+
       # tf.summary.histogram('histogram',correctPred)
       # tf.summary.scalar('Outputs', outputs)
       # merged = tf.summary.merge_all()
