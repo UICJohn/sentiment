@@ -58,11 +58,11 @@ class Trainer(Base):
 
       print("Tensorboard parameters")
 
-      # tf.summary.scalar('Loss', loss)
-      # tf.summary.scalar('Accuracy', accuracy)
-      # tf.summary.histogram('weight',weight)
-      # tf.summary.histogram('bias', bias)
-      # summary_op = tf.summary.merge_all()
+      tf.summary.scalar('Loss', loss)
+      tf.summary.scalar('Accuracy', accuracy)
+      tf.summary.histogram('weight',weight)
+      tf.summary.histogram('bias', bias)
+      summary_op = tf.summary.merge_all()
       # logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
       #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       
@@ -80,9 +80,9 @@ class Trainer(Base):
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
 
-            # writer = tf.summary.FileWriter(logdir, sess.graph)
-            # summary = sess.run(merged, {input_data: data, labels:data_labels})
-            # writer.add_summary(summary, step_count)
+            writer = tf.summary.FileWriter(logdir, sess.graph)
+            summary = sess.run(merged, {input_data: data, labels:data_labels})
+            writer.add_summary(summary, step_count)
           print("%d Training Done" % self.task_index)
           # writer.close()
 
