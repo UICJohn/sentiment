@@ -83,7 +83,9 @@ class Trainer(Base):
 
           print("Start to summary graph")
           writer = tf.summary.FileWriter(logdir, sess.graph)
+          print("Start to summary ops")
           summary = sess.run(merged, {input_data: data, labels:data_labels})
+          print("Start to add summary files")
           writer.add_summary(summary, i)
           writer.close()              
           print("%d Training Done" % self.task_index)
