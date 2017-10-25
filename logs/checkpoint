@@ -1,2 +1,0 @@
-model_checkpoint_path: "/home/ubuntu/sentiment/logs/model.ckpt-2"
-all_model_checkpoint_paths: "/home/ubuntu/sentiment/logs/model.ckpt-2"
