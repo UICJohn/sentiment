@@ -81,12 +81,11 @@ class Trainer(Base):
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
 
-            if step_count > 0 and step_count % 1000 == 0:
-              print("Start to summary graph operations")
-              writer = tf.summary.FileWriter(logdir, sess.graph)
-              summary = sess.run(merged, {input_data: data, labels:data_labels})
-              writer.add_summary(summary, step_count)
-              writer.close()
+          print("Start to summary graph")
+          writer = tf.summary.FileWriter(logdir, sess.graph)
+          summary = sess.run(merged, {input_data: data, labels:data_labels})
+          writer.add_summary(summary, i)
+          writer.close()              
           print("%d Training Done" % self.task_index)
           
 
