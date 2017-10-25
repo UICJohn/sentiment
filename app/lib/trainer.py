@@ -60,7 +60,6 @@ class Trainer(Base):
 
       tf.summary.scalar('Loss', loss)
       tf.summary.scalar('Accuracy', accuracy)
-      # tf.summary.scalar('OP', op)
       tf.summary.histogram('weight',weight)
       tf.summary.histogram('bias', bias)
       summary_op = tf.summary.merge_all()
@@ -73,16 +72,17 @@ class Trainer(Base):
           print("CURRENT EPOCH: %d" % i)
         hooks=[tf.train.StopAtStepHook(last_step = 1000 * (i + 1))]
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
+          step_count = 0
+          while not sess.should_stop():
+            
+            training_set_ids = Batch.dequeue()
+            data, data_labels = self.vector2matrix(training_set_ids)
+            sess.run(op, {input_data: data, labels: data_labels})
+            step_count += 1
 
-          training_set_ids = Batch.dequeue()
-          data, data_labels = self.vector2matrix(training_set_ids)
-          sess.run(op, {input_data: data, labels: data_labels})
-          step_count += 1
-
-            # if step_count > 0 and step_count %100 ==0:
-          writer = tf.summary.FileWriter(logdir, sess.graph)
-          summary = sess.run(merged, {input_data: data, labels:data_labels})
-          writer.add_summary(summary, step_count)
+            writer = tf.summary.FileWriter(logdir, sess.graph)
+            summary = sess.run(merged, {input_data: data, labels:data_labels})
+            writer.add_summary(summary, step_count)
           print("%d Training Done" % self.task_index)
           writer.close()
 
