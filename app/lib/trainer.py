@@ -58,12 +58,12 @@ class Trainer(Base):
 
       print("Tensorboard parameters")
 
-      tf.summary.scalar('Loss', loss)
-      tf.summary.scalar('Accuracy', accuracy)
-      tf.summary.histogram('weight',weight)
-      tf.summary.histogram('bias', bias)
-      summary_op = tf.summary.merge_all()
-      logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+      # tf.summary.scalar('Loss', loss)
+      # tf.summary.scalar('Accuracy', accuracy)
+      # tf.summary.histogram('weight',weight)
+      # tf.summary.histogram('bias', bias)
+      # summary_op = tf.summary.merge_all()
+      # logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
       #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       
 
