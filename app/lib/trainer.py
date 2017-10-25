@@ -67,20 +67,21 @@ class Trainer(Base):
       logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
       #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       writer = tf.summary.FileWriter(logdir, sess.graph)
-      
+
       for i in range(0, max_epoch):
         if(self.task_index == 0):
           print("CURRENT EPOCH: %d" % i)
         hooks=[tf.train.StopAtStepHook(last_step = 1000 * (i + 1))]
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
-            training_set_ids = Batch.dequeue()
-            data, data_labels = self.vector2matrix(training_set_ids)
-            sess.run(op, {input_data: data, labels: data_labels})
-            step_count += 1
+
+          training_set_ids = Batch.dequeue()
+          data, data_labels = self.vector2matrix(training_set_ids)
+          sess.run(op, {input_data: data, labels: data_labels})
+          step_count += 1
 
             # if step_count > 0 and step_count %100 ==0:
-            summary = sess.run(merged, {input_data: data, labels:data_labels})
-            writer.add_summary(summary, step_count)
+          summary = sess.run(merged, {input_data: data, labels:data_labels})
+          writer.add_summary(summary, step_count)
           print("%d Training Done" % self.task_index)
           writer.close()
 
