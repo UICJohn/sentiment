@@ -77,7 +77,7 @@ class Trainer(Base):
         #with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
           print("Start to summary graph")
-          writer = tf.summary.FileWriter(logdir, sess.graph)
+          #writer = tf.summary.FileWriter(logdir, sess.graph)
           
           while not sess.should_stop():
             print("In while not sess.should_stop()")
