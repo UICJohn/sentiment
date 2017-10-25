@@ -63,7 +63,7 @@ class Trainer(Base):
       tf.summary.histogram('weight',weight)
       tf.summary.histogram('bias', bias)
       summary_op = tf.summary.merge_all()
-      # logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+      logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
       #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       
 
