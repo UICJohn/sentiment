@@ -57,37 +57,35 @@ class Trainer(Base):
 
 
       print("Tensorboard parameters")
-      # tf.summary.scalar('Loss', loss)
-      # tf.summary.scalar('Accuracy', accuracy)
+      tf.summary.scalar('Loss', loss)
+      tf.summary.scalar('Accuracy', accuracy)
       # tf.summary.scalar('OP', op)
-      # tf.summary.histogram('histogram',correctPred)
-      # tf.summary.scalar('Outputs', outputs)
-      # merged = tf.summary.merge_all()
-      # logdir = "~/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+      tf.summary.histogram('weight',weight)
+      tf.summary.histogram('bias', bias)
+      summary_op = tf.summary.merge_all()
+      logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+      #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
+      writer = tf.summary.FileWriter(logdir, sess.graph)
+
+      step = 0
+      start_time = datetime.time()
 
       for i in range(0, max_epoch):
         if(self.task_index == 0):
           print("CURRENT EPOCH: %d" % i)
         hooks=[tf.train.StopAtStepHook(last_step = 1000 * (i + 1))]
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
-          step_count = 0
-          while not sess.should_stop():
             training_set_ids = Batch.dequeue()
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
             step_count += 1
 
-            # writer = tf.summary.FileWriter(logdir, sess.graph)
-            # summary = sess.run(merged, {input_data: data, labels:data_labels})
-            # writer.add_summary(summary, global_step)
+            # if step_count > 0 and step_count %100 ==0:
+            summary = sess.run(merged, {input_data: data, labels:data_labels})
+            writer.add_summary(summary, step_count)
           print("%d Training Done" % self.task_index)
-          # writer.close()
+          writer.close()
 
-
-        #   writer = tf.summary.FileWriter(logdir, sess.graph)
-        #   summary = sess.run(merged, {input_data: data, labels: data_labels})
-        #   writer.add_summary(summary,i)
-        # writer.close()
 
 
 
