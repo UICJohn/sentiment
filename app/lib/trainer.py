@@ -84,7 +84,7 @@ class Trainer(Base):
             summary = sess.run(merged, {input_data: data, labels:data_labels})
             writer.add_summary(summary, step_count)
           print("%d Training Done" % self.task_index)
-          # writer.close()
+          writer.close()
 
 
 
