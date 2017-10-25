@@ -66,6 +66,7 @@ class Trainer(Base):
       logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
       #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       
+      print("Done prepare tensorboard parameters")
 
       for i in range(0, max_epoch):
         if(self.task_index == 0):
