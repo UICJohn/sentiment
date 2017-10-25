@@ -64,7 +64,7 @@ class Trainer(Base):
       tf.summary.histogram('bias', bias)
       summary_op = tf.summary.merge_all()
       logdir = "tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
-      summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
+      #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       
       print("Done prepare tensorboard parameters")
 
@@ -72,7 +72,7 @@ class Trainer(Base):
         if(self.task_index == 0):
           print("CURRENT EPOCH: %d" % i)
         hooks=[tf.train.StopAtStepHook(last_step = 1000 * (i + 1))]
-        with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = [hooks, summary_hook]) as sess:
+        with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
           print("Start to summary graph")
           writer = tf.summary.FileWriter(logdir, sess.graph)
