@@ -57,6 +57,7 @@ class Trainer(Base):
 
 
       print("Tensorboard parameters")
+
       tf.summary.scalar('Loss', loss)
       tf.summary.scalar('Accuracy', accuracy)
       # tf.summary.scalar('OP', op)
@@ -66,10 +67,7 @@ class Trainer(Base):
       logdir = "/sentiment/tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
       #summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       writer = tf.summary.FileWriter(logdir, sess.graph)
-
-      step = 0
-      start_time = datetime.time()
-
+      
       for i in range(0, max_epoch):
         if(self.task_index == 0):
           print("CURRENT EPOCH: %d" % i)
