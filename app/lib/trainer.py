@@ -29,7 +29,7 @@ class Trainer(Base):
       server.join()
     else:
       self.__process_graph(server= server, cluster= cluster)
-
+      self.__process_graph(server = task, cluster = cluster)
   def __process_graph(self, server, cluster):
     with tf.device(tf.train.replica_device_setter(worker_device="/job:worker/task:"+str(self.task_index), cluster=cluster)):
       #create graph

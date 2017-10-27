@@ -11,6 +11,7 @@ from .batch import Batch
 from os import listdir
 from os.path import isfile, join
 import datetime
+import random
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -48,6 +49,7 @@ class Tester(Base):
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       train_step = (tf.train.AdamOptimizer().minimize(loss, global_step = global_step))
       saver = tf.train.Saver()
+
     test_data = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/Neg_kayla/')
 
     print("line 61 -------------  ", len(test_data))
@@ -156,3 +158,60 @@ class Tester(Base):
     plt.legend()
     plt.plot()
     plt.savefig(name)
+
+
+
+  @classmethod
+  def __randomTest(self, default_graph, default_sess, default_op,pos_folder, neg_folder, checkpoint_path):
+    neg_data = self.eachFile(neg_folder)
+    pos_data = self.eachFile(pos_folder)
+
+    print("neg_data and pos_data includes files : ", len(pos_data), " .......... ", len(neg_data))
+    neg_label = [0] * len(neg_data)
+    pos_label = [1] * len(pos_label)
+    dataSet = pos_data+ neg_data
+    labelSet = pos_label + neg_label
+
+    s = list(range(len(dataSet)))
+    random.shuffle(s)
+
+    reorder_data = []
+    reorder_label = []
+    prediction_result = []
+    print()
+
+    for i in range(0, len(s)):
+      reorder_data.append(dataSet[i])
+      reorder_label.append(labelSet[i])
+    
+
+    print("after reorder, the neg data and pos data include files : ", len(pos_data))
+
+    with tf.Session(graph = graph) as sess:
+      sess.run(tf.global_variables_initializer())
+      ckpt = tf.train.get_checkpoint_state(checkpoint_path)
+
+      if ckpt and tf.gfile.Exists(checkpoint_path):
+        print("Start load model")
+        saver.restore(default_sess, ckpt.model_checkpoint_path)
+
+        for i in range(0,len(reorder_data)):
+          # temp_input = reorder_data[i]
+          predictedSentiment = default_sess.run(tf.nn.softmax(default_op), {input_data: reorder_data[i]})[0]
+          if (predictedSentiment[0])>(predictedSentiment[2]):
+            print('The line 83 --------------------', predictedSentiment)
+            prediction_result.append(0)
+          else:
+            print('The line 87 --------------------', predictedSentiment)
+            prediction_result.append(1)
+      else:
+        print('no checkpoint found')
+        return
+    correct_result = 0
+    for i in range(0,len(reorder_label)):
+      if reorder_label[i] == prediction_result[i]:
+        correct_result = correct_result + 1
+
+
+    self.__drawGraph([correct_result, len(reorder_label)],'data_correct_result_analysis.png')
+          
