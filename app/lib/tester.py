@@ -184,9 +184,8 @@ class Tester(Base):
       reorder_data.append(dataSet[i])
       reorder_label.append(labelSet[i])
     
-
-    print("after reorder, the neg data and pos data include files : ", len(pos_data))
-
+    print("after reorder, the neg data and pos data include files : ", len(pos_data), ".........", len(neg_data))
+    print("after reorder, the neg label and pos label include files : ", len(pos_label), ".........", len(neg_label))
     with tf.Session(graph = graph) as sess:
       sess.run(tf.global_variables_initializer())
       ckpt = tf.train.get_checkpoint_state(checkpoint_path)
@@ -199,15 +198,16 @@ class Tester(Base):
           # temp_input = reorder_data[i]
           predictedSentiment = default_sess.run(tf.nn.softmax(default_op), {input_data: reorder_data[i]})[0]
           if (predictedSentiment[0])>(predictedSentiment[2]):
-            print('The line 83 --------------------', predictedSentiment)
+            print('The line 203 --------------------', predictedSentiment)
             prediction_result.append(0)
           else:
-            print('The line 87 --------------------', predictedSentiment)
+            print('The line 205 --------------------', predictedSentiment)
             prediction_result.append(1)
       else:
         print('no checkpoint found')
         return
     correct_result = 0
+    
     for i in range(0,len(reorder_label)):
       if reorder_label[i] == prediction_result[i]:
         correct_result = correct_result + 1
