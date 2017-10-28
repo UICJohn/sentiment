@@ -55,6 +55,9 @@ class Trainer(Base):
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       op = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
 
+      
+      
+
 
       print("Tensorboard parameters")
 
@@ -67,7 +70,7 @@ class Trainer(Base):
       # summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       
       print("Done prepare tensorboard parameters")
-      
+
       for i in range(0, max_epoch):
         if(self.task_index == 0):
           print("CURRENT EPOCH: %d" % i)
@@ -78,8 +81,9 @@ class Trainer(Base):
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
           print("Start to summary graph")
-          #writer = tf.summary.FileWriter(logdir, sess.graph)
           
+          #writer = tf.summary.FileWriter(logdir, sess.graph)
+
           while not sess.should_stop():
             print("In while not sess.should_stop()")
             training_set_ids = Batch.dequeue()
@@ -89,6 +93,7 @@ class Trainer(Base):
             step_count += 1
             
             print("Start to summary ops")
+
             # if (i%100 == 0 and i > 0):
             #   summary = sess.run(summary_op, {input_data: data, labels:data_labels})
             #   print("Start to add summary files")
