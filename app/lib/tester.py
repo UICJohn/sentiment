@@ -50,37 +50,43 @@ class Tester(Base):
       train_step = (tf.train.AdamOptimizer().minimize(loss, global_step = global_step))
       saver = tf.train.Saver()
 
-    test_data = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/Neg_kayla/')
+    #test_data = self.eachFile('/Users/chih/Documents/IOS/dev_sentiment/sentiment/Neg_kayla/')
 
-    print("line 61 -------------  ", len(test_data))
+    #print("line 61 -------------  ", len(test_data))
 
     correct_result  = []
     incorrect_result = []
     prediction_result = []
     final_result = ''
-    with tf.Session(graph = graph) as sess:
-        sess.run(tf.global_variables_initializer())
-        ckpt = tf.train.get_checkpoint_state('logs')
-        probability_value = 0
-        if ckpt and tf.gfile.Exists('logs'):
-            print('Start load model')
-            saver.restore(sess, ckpt.model_checkpoint_path)
-            for i in range(0,len(test_data)):
-              temp_input = test_data[i]
-              predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data:test_data[i]})[0]
-              if (predictedSentiment[0])>(predictedSentiment[2]):
-                print('The line 83 --------------------', predictedSentiment)
+    # with tf.Session(graph = graph) as sess:
+    #     sess.run(tf.global_variables_initializer())
+    #     ckpt = tf.train.get_checkpoint_state('logs')
+    #     probability_value = 0
+    #     if ckpt and tf.gfile.Exists('logs'):
+    #         print('Start load model')
+    #         saver.restore(sess, ckpt.model_checkpoint_path)
+    #         for i in range(0,len(test_data)):
+    #           temp_input = test_data[i]
+    #           predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data:test_data[i]})[0]
+    #           if (predictedSentiment[0])>(predictedSentiment[2]):
+    #             print('The line 83 --------------------', predictedSentiment)
 
-                prediction_result.append(0)
-              else:
-                print('The line 87 --------------------', predictedSentiment)
-                prediction_result.append(1)
-        else:
-            print('no checkpoint found') 
-            return
-    output_neg = prediction_result.count(0)
-    output_pos = prediction_result.count(1)
-    self.__drawGraph([output_pos,output_neg], 'pos_kayla_result_.png')
+    #             prediction_result.append(0)
+    #           else:
+    #             print('The line 87 --------------------', predictedSentiment)
+    #             prediction_result.append(1)
+    #     else:
+    #         print('no checkpoint found') 
+    #         return
+    # output_neg = prediction_result.count(0)
+    # output_pos = prediction_result.count(1)
+    # self.__drawGraph([output_pos,output_neg], 'pos_kayla_result_.png')
+     
+    # output_neg = prediction_result.count(0)
+    # output_pos = prediction_result.count(1)
+    # self.__drawGraph([output_pos,output_neg], 'pos_kayla_result_.png')
+    print('Start to test in line 84')
+    self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_pos/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_neg/')
 
   @classmethod
   def eachFile(self, filePath):
@@ -88,10 +94,11 @@ class Tester(Base):
     test_data = []
     files = [filePath + f for f in listdir(filePath) if isfile(join(filePath, f)) and not f.startswith('.')]
     labels = []
+    #print("----------------------------", len(files))
     numWords = []
     for f in files:
       num = num + 1
-      if num < 16:
+      if num < len(files)+1:
         print(f)
         with open(f, "r", encoding = 'utf-8') as f:
           #read each file
@@ -162,13 +169,16 @@ class Tester(Base):
 
 
   @classmethod
-  def __randomTest(self, default_graph, default_sess, default_op,pos_folder, neg_folder, checkpoint_path):
+  def __randomTest(self, pos_folder, neg_folder):
     neg_data = self.eachFile(neg_folder)
-    pos_data = self.eachFile(pos_folder)
+    print('Stop')
 
-    print("neg_data and pos_data includes files : ", len(pos_data), " .......... ", len(neg_data))
+    pos_data = self.eachFile(pos_folder)
+    print('-=====================================', len(pos_data))
+    print('-=====================================', len(neg_data))
+    # print("neg_data and pos_data includes files : ", len(pos_data), " .......... ", len(neg_data))
     neg_label = [0] * len(neg_data)
-    pos_label = [1] * len(pos_label)
+    pos_label = [1] * len(pos_data)
     dataSet = pos_data+ neg_data
     labelSet = pos_label + neg_label
 
@@ -178,25 +188,49 @@ class Tester(Base):
     reorder_data = []
     reorder_label = []
     prediction_result = []
-    print()
 
     for i in range(0, len(s)):
       reorder_data.append(dataSet[i])
       reorder_label.append(labelSet[i])
     
     print("after reorder, the neg data and pos data include files : ", len(pos_data), ".........", len(neg_data))
-    print("after reorder, the neg label and pos label include files : ", len(pos_label), ".........", len(neg_label))
+    print("after reorder, the neg label and pos label include files : ", len(pos_label), ".........", len(pos_label))
+    graph = tf.Graph()
+    with graph.as_default():
+
+      weight = tf.Variable(tf.truncated_normal([lstmUnits, numClasses]))
+      bias = tf.Variable(tf.constant(0.1, shape=[numClasses]))
+
+      input_data = tf.placeholder(tf.float32, [batchSize, TrainingSet.maxSentenceLen(), 300], name = 'input_placeholder')
+      labels = tf.placeholder(tf.float32, [batchSize, numClasses], name = 'labels_placeholder')
+      print('++++++++++++++++++++++ graph', labels)
+      global_step = tf.contrib.framework.get_or_create_global_step()
+
+      lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
+      lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=1)
+      outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
+
+      outputs = tf.transpose(outputs, [1, 0, 2])
+      last = tf.gather(outputs, int(outputs.get_shape()[0]) - 1)
+
+      prediction = tf.matmul(last, weight) + bias
+      correctPred = tf.equal(tf.argmax(prediction,1), tf.argmax(labels,1))
+      accuracy = tf.reduce_mean(tf.cast(correctPred, tf.float32))
+      loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
+      train_step = (tf.train.AdamOptimizer().minimize(loss, global_step = global_step))
+      saver = tf.train.Saver()
+
     with tf.Session(graph = graph) as sess:
       sess.run(tf.global_variables_initializer())
-      ckpt = tf.train.get_checkpoint_state(checkpoint_path)
+      ckpt = tf.train.get_checkpoint_state('logs')
 
-      if ckpt and tf.gfile.Exists(checkpoint_path):
+      if ckpt and tf.gfile.Exists('logs'):
         print("Start load model")
-        saver.restore(default_sess, ckpt.model_checkpoint_path)
+        saver.restore(sess, ckpt.model_checkpoint_path)
 
         for i in range(0,len(reorder_data)):
           # temp_input = reorder_data[i]
-          predictedSentiment = default_sess.run(tf.nn.softmax(default_op), {input_data: reorder_data[i]})[0]
+          predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data: reorder_data[i]})[0]
           if (predictedSentiment[0])>(predictedSentiment[2]):
             print('The line 203 --------------------', predictedSentiment)
             prediction_result.append(0)
