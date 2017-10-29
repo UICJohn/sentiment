@@ -183,7 +183,10 @@ class Tester(Base):
     labelSet = pos_label + neg_label
 
     s = list(range(len(dataSet)))
+    print("================================== before random", s)
     random.shuffle(s)
+
+    print("================================== after random", s)
 
     reorder_data = []
     reorder_label = []
@@ -207,7 +210,7 @@ class Tester(Base):
       global_step = tf.contrib.framework.get_or_create_global_step()
 
       lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-      lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=1)
+      lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
       outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
       outputs = tf.transpose(outputs, [1, 0, 2])

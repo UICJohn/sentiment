@@ -56,7 +56,7 @@ class Trainer(Base):
       op = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
 
       
-      
+
 
 
       print("Tensorboard parameters")
@@ -89,7 +89,7 @@ class Trainer(Base):
             training_set_ids = Batch.dequeue()
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
-            print("The current  adamOptimizer is --------:", sess.run(op, {input_data: data, labels: data_labels}))
+            
             step_count += 1
             
             print("Start to summary ops")
@@ -98,7 +98,8 @@ class Trainer(Base):
             #   summary = sess.run(summary_op, {input_data: data, labels:data_labels})
             #   print("Start to add summary files")
             #   writer.add_summary(summary, i)
-            # writer.close()              
+            # writer.close()
+                          
           print("%d Training Done" % self.task_index)
           
 
