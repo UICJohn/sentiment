@@ -80,26 +80,25 @@ class Trainer(Base):
 
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
-          print("Start to summary graph")
+          # print("Start to summary graph")
           
           #writer = tf.summary.FileWriter(logdir, sess.graph)
 
           while not sess.should_stop():
-            print("In while not sess.should_stop()")
+            # print("In while not sess.should_stop()")
             training_set_ids = Batch.dequeue()
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
-            
+            print("The current  loss is --------:", sess.run(loss, {input_data: data, labels: data_labels}))
             step_count += 1
             
-            print("Start to summary ops")
+            # print("Start to summary ops")
 
             # if (i%100 == 0 and i > 0):
             #   summary = sess.run(summary_op, {input_data: data, labels:data_labels})
             #   print("Start to add summary files")
             #   writer.add_summary(summary, i)
-            # writer.close()
-                          
+            # writer.close()              
           print("%d Training Done" % self.task_index)
           
 

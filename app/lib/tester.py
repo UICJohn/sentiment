@@ -249,6 +249,7 @@ class Tester(Base):
       if reorder_label[i] == prediction_result[i]:
         correct_result = correct_result + 1
 
-
+    print("Actual the label is ++++++++++++++++++++++ ", reorder_label )
+    print("The prediction result is -----------------------", prediction_result)
     self.__drawGraph([correct_result, len(reorder_label)],'data_correct_result_analysis.png')
           
