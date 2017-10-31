@@ -62,7 +62,7 @@ class Prediction(Base):
             #print('------------------ accuracy', sess.run(last, {input_data:test_data}))
             predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data:test_data})[0]
             print('====================================', sess.run(prediction, {input_data:test_data}))
-            if predictedSentiment[0]> predictedSentiment[2]:
+            if predictedSentiment[0] > predictedSentiment[2]:
                 # print("Positive value is ", predictedSentiment[0])
                 # final_result = 'Positive'
                 probability_value = predictedSentiment[0]

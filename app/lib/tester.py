@@ -86,7 +86,13 @@ class Tester(Base):
     # output_pos = prediction_result.count(1)
     # self.__drawGraph([output_pos,output_neg], 'pos_kayla_result_.png')
     print('Start to test in line 84')
-    self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_pos/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_neg/')
+    
+    ls1 = self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_pos/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_neg/', 'logs')
+    ls2 = self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/Positive_kayla/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/Neg_kayla/', 'logs')
+    # [str(len(reorder_label)), str(correct_result), str(len(reorder_label) - correct_result)]
+    self.__drawGraph(ls1,ls2,'data_correct_result_analysis.png')
+
+
 
   @classmethod
   def eachFile(self, filePath):
@@ -94,12 +100,12 @@ class Tester(Base):
     test_data = []
     files = [filePath + f for f in listdir(filePath) if isfile(join(filePath, f)) and not f.startswith('.')]
     labels = []
-    #print("----------------------------", len(files))
+    # print("----------------------------", len(files))
     numWords = []
     for f in files:
       num = num + 1
       if num < len(files)+1:
-        print(f)
+        # print(f)
         with open(f, "r", encoding = 'utf-8') as f:
           #read each file
           line = f.readline()
@@ -154,26 +160,43 @@ class Tester(Base):
     return string
 
   @classmethod
-  def __drawGraph(self, prediction_result, name):
+  def __drawGraph(self, ls1,ls2, name):
+    # total_data, correct_data, incorrect_data
+    print("================================", ls1, " ----- ", ls2)
     plt.figure(figsize = (6,9))
-    labels = [u'Correct', u'Incorrect']
+    ax1 = plt.subplot(211)
+
+    labels = [u'Correct: ' + str(ls1[1]), u'Incorrect: '+ str(ls1[2])]
     colors = ['red', 'yellowgreen']
     explode = (0.05,0.05)
-    patches, l_text, p_text = plt.pie(prediction_result, explode = explode, labels = labels, colors = colors, labeldistance = 1.1, autopct = '%3.1f%%', shadow = False,
-                                startangle = 90,pctdistance = 0.6) 
+    patches, l_text, p_text = plt.pie([ls1[1], ls1[2]], explode = explode, labels = labels, colors = colors, labeldistance = 1.1, autopct = '%3.1f%%', shadow = False,
+                              startangle = 90,pctdistance = 0.6) 
+    # plt.pie(prediction_result, labels = labels, autopct = '%1.2f%%')
     plt.axis('equal')
-    plt.legend()
+    plt.title("Truth Data: " + str(ls1[0]))
+    plt.legend(loc='upper left',fancybox=True,shadow=True)
+
+    ax2 = plt.subplot(212)
+    labels = [u'Correct: ' + str(ls2[1]), u'Incorrect: '+ str(ls2[2])]
+    colors = ['red', 'yellowgreen']
+    explode = (0.05,0.05)
+    patches, l_text, p_text = plt.pie([ls2[1], ls2[2]], explode = explode, labels = labels, colors = colors, labeldistance = 1.1, autopct = '%3.1f%%', shadow = False,
+                              startangle = 90,pctdistance = 0.6) 
+    # plt.pie(prediction_result, labels = labels, autopct = '%1.2f%%')
+    plt.axis('equal')
+    plt.title("Truth Data: " + str(ls2[0]))
+    plt.legend(loc='upper left',fancybox=True,shadow=True)
+
     plt.plot()
     plt.savefig(name)
 
-
-
   @classmethod
-  def __randomTest(self, pos_folder, neg_folder):
-    neg_data = self.eachFile(neg_folder)
-    print('Stop')
+  def __randomTest(self, pos_folder, neg_folder, checkpoint_file):
+    
+    # print('Stop')
 
     pos_data = self.eachFile(pos_folder)
+    neg_data = self.eachFile(neg_folder)
     print('-=====================================', len(pos_data))
     print('-=====================================', len(neg_data))
     # print("neg_data and pos_data includes files : ", len(pos_data), " .......... ", len(neg_data))
@@ -185,7 +208,6 @@ class Tester(Base):
     s = list(range(len(dataSet)))
     print("================================== before random", s)
     random.shuffle(s)
-
     print("================================== after random", s)
 
     reorder_data = []
@@ -193,11 +215,14 @@ class Tester(Base):
     prediction_result = []
 
     for i in range(0, len(s)):
-      reorder_data.append(dataSet[i])
-      reorder_label.append(labelSet[i])
+      reorder_data.append(dataSet[s[i]])
+      reorder_label.append(labelSet[s[i]])
     
-    print("after reorder, the neg data and pos data include files : ", len(pos_data), ".........", len(neg_data))
-    print("after reorder, the neg label and pos label include files : ", len(pos_label), ".........", len(pos_label))
+    # print("before reorder, the actual data label is ---", labelSet)
+    # print("after reorder, the actual data label is +++", reorder_label)
+
+    # print("after reorder, the neg data and pos data include files : ", len(pos_data), ".........", len(neg_data))
+    # print("after reorder, the neg label and pos label include files : ", len(pos_label), ".........", len(neg_label))
     graph = tf.Graph()
     with graph.as_default():
 
@@ -225,9 +250,9 @@ class Tester(Base):
 
     with tf.Session(graph = graph) as sess:
       sess.run(tf.global_variables_initializer())
-      ckpt = tf.train.get_checkpoint_state('logs')
+      ckpt = tf.train.get_checkpoint_state(checkpoint_file)
 
-      if ckpt and tf.gfile.Exists('logs'):
+      if ckpt and tf.gfile.Exists(checkpoint_file):
         print("Start load model")
         saver.restore(sess, ckpt.model_checkpoint_path)
 
@@ -235,21 +260,45 @@ class Tester(Base):
           # temp_input = reorder_data[i]
           predictedSentiment = sess.run(tf.nn.softmax(prediction), {input_data: reorder_data[i]})[0]
           if (predictedSentiment[0])>(predictedSentiment[2]):
-            print('The line 203 --------------------', predictedSentiment)
+            # print('The line 203 --------------------', predictedSentiment)
             prediction_result.append(0)
           else:
-            print('The line 205 --------------------', predictedSentiment)
+            # print('The line 205 --------------------', predictedSentiment)
             prediction_result.append(1)
       else:
         print('no checkpoint found')
         return
     correct_result = 0
     
+    incorrect_data_index = []
     for i in range(0,len(reorder_label)):
       if reorder_label[i] == prediction_result[i]:
         correct_result = correct_result + 1
+      else:
+        incorrect_data_index.append(s[i])
 
-    print("Actual the label is ++++++++++++++++++++++ ", reorder_label )
-    print("The prediction result is -----------------------", prediction_result)
-    self.__drawGraph([correct_result, len(reorder_label)],'data_correct_result_analysis.png')
+    #print("The correct result is #################### ", correct_result)
+    #print("Actual the label is ++++++++++++++++++++++ ", reorder_label, "++++++++++++++ ", len(reorder_label) )
+    #print("The prediction result is ----------------- ", prediction_result, "-----------", len(prediction_result))
+
+    # print("\n")
+    print("Incorrect data index is ############ ", incorrect_data_index)
+    print("\n")
+    self.__searchFiles(pos_folder,neg_folder, incorrect_data_index)
+    return [len(reorder_label), correct_result, len(reorder_label) - correct_result]
+    # return [str(len(reorder_label)), str(correct_result), str(len(reorder_label) - correct_result)]
+
+    # self.__drawGraph([correct_result, len(reorder_label) - correct_result],'data_correct_result_analysis.png',str(len(reorder_label)), str(correct_result), str(len(reorder_label) - correct_result))
           
+  @classmethod
+  def __searchFiles(self, folder1_path, folder2_path, incorrect_data_index):
+    #print
+    files1 = [folder1_path + f for f in listdir(folder1_path) if isfile(join(folder1_path, f)) and not f.startswith('.')]
+    files2 = [folder2_path + f for f in listdir(folder2_path) if isfile(join(folder2_path, f)) and not f.startswith('.')]
+    files = files1 + files2
+    for f in range(0, len(incorrect_data_index)):
+      print("Incorrect data index is ############", files[incorrect_data_index[f]])
+
+
+
+

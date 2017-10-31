@@ -5,6 +5,7 @@ from app.config import GPU_NUMS
 from kombu.common import Broadcast
 from app.lib import Prediction
 from app.lib import Tester
+from app.lib import Maker
 
 celery = init_celery(sentiment_app)
 celery.conf.task_routes = {
@@ -55,3 +56,10 @@ def test():
   Tester.process()
   # test_size, correct_size, incorrect_size, accuracy = Tester.process()
   # return [test_size, correct_size, incorrect_size, accuracy]
+@celery.task()
+def make(numbers):
+  print("Start to make sentence")
+  Maker.process(numbers)
+
+
+
