@@ -61,5 +61,9 @@ def make(numbers):
   print("Start to make sentence")
   Maker.process(numbers)
 
-
+@celery.task()
+def update_redis():
+  v = Vector()
+  v.process_all()
+  print("Done to update redis")
 

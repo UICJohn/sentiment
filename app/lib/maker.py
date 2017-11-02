@@ -26,11 +26,7 @@ class Maker():
     # num_p = self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/')
     # num_n = self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/')
     # print("---------------", num_p + num_n)
-
-
     # else:
-
-
   @classmethod
   def readFile(self, filePath):
     files = [filePath + f for f in listdir(filePath) if isfile(join(filePath, f)) and not f.startswith('.')]

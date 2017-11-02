@@ -3,3 +3,4 @@ from .training_task_controller import TrainingTaskController
 from .prediction_controller import PredictionController
 from .testing_controller import TestingController
 from .making_sentence_controller import MakingSentenceController
+from .vector_controller import VectorController
