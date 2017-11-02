@@ -12,7 +12,7 @@ sentiment_api.add_resource(TrainingSetController, '/')
 sentiment_api.add_resource(TrainingTaskController, '/training')
 sentiment_api.add_resource(PredictionController, '/prediction')
 sentiment_api.add_resource(TestingController, '/testing')
-
+-sentiment_api.add_resource(MakingSentenceController,'/making')
 sentiment_api.add_resource(VectorController,'/add')
 
 if __name__ == '__main__':
