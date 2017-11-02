@@ -6,8 +6,7 @@ import numpy as np
 import re
 import os
 import random
-
-
+from datetime import datetime
 
 class Maker():
   """docstring for Maker"""
@@ -21,10 +20,14 @@ class Maker():
     # print("-------------------------", subject_list)
     # print("++++++++++++++++++++++++ ", verb_list)
     # print("++++++++++++++++++++++++ ", object_list)
-    self.__recombinate(subject_list,verb_list,object_list)
+    s1, s2,s3 = self.__recombinate(subject_list,verb_list,object_list)
     # if len(object_list[0]) > 100:
+    # print("output files is ", len(s1), " s2 :", len(s2), " s3 :", len(s3), len(s1)+ len(s2)+len(s3))
+    # num_p = self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/')
+    # num_n = self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/')
+    # print("---------------", num_p + num_n)
 
-      
+
     # else:
 
 
@@ -56,31 +59,121 @@ class Maker():
     return string
   @classmethod
   def __recombinate(self, subject_list, verb_list, object_list):
+    dt = datetime.now()
+    s1 = []
+    s2 = []
+    s3 = []
+    # print("----------------------------------",len(object_list[0]), len(object_list[1]) )
     for i in range(0,len(subject_list)):
       if i== 0:
         for j in range(0,len(subject_list[i])):
           for k in range(0, len(verb_list[i])):
             sentence = subject_list[i][j] + " " + verb_list[0][k]
-            print('-----------------------', sentence)
-            for p in range(0, len(object_list[0])):
-              sentence = sentence + " " + object_list[0][p]
-
+            if k > 1:
+              for p in range(0, len(object_list[0])):
+                #not negative -> positive
+                s1.append(sentence + " " + object_list[0][p])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/'+ str(i)+ str(j)+ str(k) + str(p) + str(0) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[0][p])
+              for q in range(0,len(object_list[1])):
+                #not positive ->negative
+                s1.append(sentence + " " + object_list[1][q])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'+  str(i)+ str(j)+ str(k) + str(q) +str(1) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[1][q])                
+                
+            else:
+              for p in range(0,len(object_list[0])):
+                #negative ->negative
+                s1.append(sentence + " " + object_list[0][p])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'+  str(i)+ str(j)+ str(k)+ str(p)+str(0) +'.txt'
+                with open(fh,"w") as txt:
+                  txt.write(sentence + " " + object_list[0][p])
+              for q in range(0,len(object_list[1])):
+                #positive -> positive
+                s1.append(sentence + " " + object_list[1][q])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/'+  str(i)+ str(j) + str(k) + str(q) +str(1) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[1][q])
+        # print("The line 99 is +++++++++++++++++++++++ ", self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/') + self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'))
       elif i == 1:
         for j in range(0,len(subject_list[i])):
           for k in range(0, len(verb_list[i])):
             sentence = subject_list[i][j]+ " " +verb_list[1][k]
-            print('-----------------------', sentence)
-            for p in range(0, len(object_list[0])):
-              sentence = sentence + " " + object_list[0][p]            
+            # #print('-----------------------', sentence)
+            if k > 1:
+              for p in range(0,len(object_list[0])):
+                #not negative -> positive
+                s2.append(sentence + " " + object_list[0][p])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/'+ str(i)+ str(j) + str(k) + str(p) + str(0) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[0][p])
+              for q in range(0, len(object_list[1])):
+                #not positive -> negative
+                s2.append(sentence + " " + object_list[1][q])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'+ str(i)+ str(j) + str(k) + str(q) + str(1) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[1][q])
+            else:
+              for p in range(0,len(object_list[0])):
+                #negative -> negative
+                s2.append(sentence + " " + object_list[0][p])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'+  str(i)+ str(j)+ str(k)+ str(p)+str(0) +'.txt'
+                with open(fh,"w") as txt:
+                  txt.write(sentence + " " + object_list[0][p])
+              for q in range(0,len(object_list[1])):
+                #positive -> positive
+                s2.append(sentence + " " + object_list[1][q])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/'+  str(i)+ str(j) +str(k)+ str(q) +str(1) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[1][q])
+        # print("The line 131 is +++++++++++++++++++++++ ", self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/') + self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'))
+
       elif i == 2:
         for j in range(0,len(subject_list[i])):
           for k in range(0, len(verb_list[i])):
             sentence = subject_list[i][j]+ " " +verb_list[2][k]
-            print('-----------------------', sentence)
-            for p in range(0, len(object_list[0])):
-              sentence = sentence + " " + object_list[0][p]
+            #print('-----------------------', sentence)
+            if k > 1:
+              for p in range(0,len(object_list[0])):
+                #not negative -> positive
+                s3.append(sentence + " " + object_list[0][p])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/'+ str(i)+ str(j) + str(k) + str(p) + str(0) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[0][p])
+              for q in range(0,len(object_list[1])):
+                #not positive -> negative
+                s3.append(sentence + " " + object_list[1][q])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'+ str(i)+ str(j) + str(k) + str(q) + str(1) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[1][q])
+            else:
+              for p in range(0,len(object_list[0])):
+                #negative -> negative
+                s3.append(sentence + " " + object_list[0][p])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'+  str(i)+ str(j)+ str(k)+ str(p)+str(0) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[0][p])
+              for q in range(0,len(object_list[1])):
+                #positive -> positive
+                s3.append(sentence + " " + object_list[1][q])
+                fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/'+  str(i)+ str(j) +str(k)+ str(q) +str(1) +'.txt'
+                with open(fh, "w") as txt:
+                  txt.write(sentence + " " + object_list[1][q])             
+        # print("The line 164 is +++++++++++++++++++++++ ", self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/') + self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'))
 
+    return s1,s2,s3          
 
+  @classmethod
+  def countFiles(self, filePath):
+    #convert generated sentences into .txt
+    files = [filePath + f for f in listdir(filePath) if isfile(join(filePath, f)) and not f.startswith('.')]
+    num = 0
+    for f in files:
+      num = num + 1;
+      # print("Files number is =================== ", num)
+    return num
 
 
 
