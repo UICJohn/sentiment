@@ -1,6 +1,6 @@
 DEBUG = True
 
-batchSize = 24
+batchSize = 32
 
 maxBatchCount = 200
 

@@ -17,3 +17,4 @@ class Vector:
         self.add(training_set)
         print("TrainingSet Vector Count: %d" % counter)
         counter += 1
+

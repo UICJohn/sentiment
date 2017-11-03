@@ -98,7 +98,8 @@ class Trainer(Base):
             #   summary = sess.run(summary_op, {input_data: data, labels:data_labels})
             #   print("Start to add summary files")
             #   writer.add_summary(summary, i)
-            # writer.close()              
+            # writer.close()
+
           print("%d Training Done" % self.task_index)
           
 
