@@ -87,12 +87,10 @@ class Tester(Base):
     # self.__drawGraph([output_pos,output_neg], 'pos_kayla_result_.png')
     print('Start to test in line 84')
     
-    ls1 = self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_pos/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_neg/', 'logs')
-    ls2 = self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/Positive_kayla/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/Neg_kayla/', 'logs')
+    ls1 = self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_pos/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/test_neg/', 'logs_0611')
+    ls2 = self.__randomTest('/Users/chih/Documents/IOS/sentiment_dev/sentiment/Positive_kayla/','/Users/chih/Documents/IOS/sentiment_dev/sentiment/Neg_kayla/', 'logs_0611')
     # [str(len(reorder_label)), str(correct_result), str(len(reorder_label) - correct_result)]
     self.__drawGraph(ls1,ls2,'data_correct_result_analysis.png')
-
-
 
   @classmethod
   def eachFile(self, filePath):

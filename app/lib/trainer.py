@@ -55,10 +55,6 @@ class Trainer(Base):
       loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=labels))
       op = tf.train.AdamOptimizer().minimize(loss, global_step = global_step)
 
-      
-
-
-
       print("Tensorboard parameters")
 
       tf.summary.scalar('Loss', loss)
@@ -66,7 +62,7 @@ class Trainer(Base):
       tf.summary.histogram('weight',weight)
       tf.summary.histogram('bias', bias)
       summary_op = tf.summary.merge_all()
-      logdir = "tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
+      # logdir = "tensorBoard/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "/"
       # summary_hook = tf.train.SummarySaverHook(save_secs=600,output_dir=logdir,summary_op=summary_op)
       
       print("Done prepare tensorboard parameters")
@@ -81,8 +77,6 @@ class Trainer(Base):
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
           # print("Start to summary graph")
-          
-          #writer = tf.summary.FileWriter(logdir, sess.graph)
 
           while not sess.should_stop():
             # print("In while not sess.should_stop()")
@@ -91,15 +85,7 @@ class Trainer(Base):
             sess.run(op, {input_data: data, labels: data_labels})
             print("The current  loss is --------:", sess.run(loss, {input_data: data, labels: data_labels}))
             step_count += 1
-            
-            # print("Start to summary ops")
-
-            # if (i%100 == 0 and i > 0):
-            #   summary = sess.run(summary_op, {input_data: data, labels:data_labels})
-            #   print("Start to add summary files")
-            #   writer.add_summary(summary, i)
-            # writer.close()
-
+          # summary_writer = sess.hooks[1].
           print("%d Training Done" % self.task_index)
           
 

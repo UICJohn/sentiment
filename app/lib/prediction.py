@@ -34,7 +34,7 @@ class Prediction(Base):
         global_step = tf.contrib.framework.get_or_create_global_step()
 
         lstmCell = tf.contrib.rnn.BasicLSTMCell(lstmUnits)
-        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=1)
+        lstmCell = tf.contrib.rnn.DropoutWrapper(cell = lstmCell, output_keep_prob=0.75)
         outputs, _ = tf.nn.dynamic_rnn(lstmCell, input_data, dtype=tf.float32)
 
         outputs = tf.transpose(outputs, [1, 0, 2])
@@ -53,9 +53,9 @@ class Prediction(Base):
 
     with tf.Session(graph = graph) as sess:
         sess.run(tf.global_variables_initializer())
-        ckpt = tf.train.get_checkpoint_state('logs')
+        ckpt = tf.train.get_checkpoint_state('logs_0611')
         probability_value = 0
-        if ckpt and tf.gfile.Exists('logs'):
+        if ckpt and tf.gfile.Exists('logs_0611'):
             print('Start load model')
             saver.restore(sess, ckpt.model_checkpoint_path)
 
@@ -92,10 +92,11 @@ class Prediction(Base):
       print('Coming in word in split')
       if word:
         if em.where('word',word).first():
-          print('Could find word in embedding matrix')
+          
           word_vector = em.where('word',word).first().vector
           matrix.append(word_vector)
         else:
+          print('Could not find word in embedding matrix', em.where('word',word).first())
           matrix.append([0] * 300)
     if len(split) >= TrainingSet.maxSentenceLen():
       matrix = matrix[0:TrainingSet.maxSentenceLen]

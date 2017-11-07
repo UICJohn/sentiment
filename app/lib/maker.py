@@ -16,11 +16,13 @@ class Maker():
     verb_list = self.readFile('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/Verb/')
     object_list = self.readFile('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/Object/')
 
-
+    adverb_list = self.readFile('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/Adverb/')
+    s = self.__doubleNeg(["not","never"], adverb_list, object_list)
+    print(">>>>>>>>>>>>>>>>>>>>>",len(s))
     # print("-------------------------", subject_list)
     # print("++++++++++++++++++++++++ ", verb_list)
     # print("++++++++++++++++++++++++ ", object_list)
-    s1, s2,s3 = self.__recombinate(subject_list,verb_list,object_list)
+    # s1, s2,s3 = self.__recombinate(subject_list,verb_list,object_list)
     # if len(object_list[0]) > 100:
     # print("output files is ", len(s1), " s2 :", len(s2), " s3 :", len(s3), len(s1)+ len(s2)+len(s3))
     # num_p = self.countFiles('/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_pos/')
@@ -146,6 +148,8 @@ class Maker():
                   txt.write(sentence + " " + object_list[1][q])
             else:
               for p in range(0,len(object_list[0])):
+
+                  
                 #negative -> negative
                 s3.append(sentence + " " + object_list[0][p])
                 fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_neg/'+  str(i)+ str(j)+ str(k)+ str(p)+str(0) +'.txt'
@@ -171,7 +175,20 @@ class Maker():
       # print("Files number is =================== ", num)
     return num
 
-
+  @classmethod
+  def __doubleNeg(self, verb_list, adverb_list,object_list):
+    s = []
+    print(">>>>>>>>>>>>>", verb_list)
+    for x in range(0,len(verb_list)):
+      for y in range(0,len(adverb_list[0])):
+        for z in range(0,len(object_list[0])):
+          s.append(verb_list[x] + " " + adverb_list[0][y] + " " + object_list[0][z])
+          fh = '/Users/chih/Documents/IOS/sentiment_dev/sentiment/sentence/tmp_doubleNeg/'+  str(x)+ str(y) +str(z)+ "doubleNeg" +'.txt'
+          with open(fh, "w") as txt:
+            txt.write(verb_list[x] + " " + adverb_list[0][y] + " " + object_list[0][z])
+    return s
+      
+    
 
 
 
