@@ -76,6 +76,7 @@ class Trainer(Base):
             training_set_ids = Batch.dequeue()
             data, data_labels = self.vector2matrix(training_set_ids)
             sess.run(op, {input_data: data, labels: data_labels})
+            # print
             # print("The current  loss is --------:", sess.run(loss, {input_data: data, labels: data_labels}))
             step_count += 1
           print("%d Training Done" % self.task_index)
