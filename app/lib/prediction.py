@@ -28,7 +28,7 @@ class Prediction(Base):
         weight = tf.Variable(tf.truncated_normal([lstmUnits, numClasses]))
         bias = tf.Variable(tf.constant(0.1, shape=[numClasses]))
 
-        input_data = tf.placeholder(tf.float32, [batchSize, TrainingSet.maxSentenceLen(), 300], name = 'input_placeholder')
+        input_data = tf.placeholder(tf.float32, [batchSize, TrainingSet.maxSentenceLen(),300], name = 'input_placeholder')
         labels = tf.placeholder(tf.float32, [batchSize, numClasses], name = 'labels_placeholder')
 
         global_step = tf.contrib.framework.get_or_create_global_step()
