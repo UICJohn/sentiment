@@ -10,5 +10,5 @@ class TrainingTaskController(Resource):
     TaskControl.clean_up_task()
     create_batch.delay()
     for i in range(0, 8):
-      init_worker.apply_async(countdown = 60)
+      init_worker.apply_async(countdown = 2)
     return {"STATUS": "DONE"}
