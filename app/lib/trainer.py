@@ -68,7 +68,7 @@ class Trainer(Base):
       for i in range(0, max_epoch):
         if(self.task_index == 0):
           print("CURRENT EPOCH: %d" % i)
-        hooks=[tf.train.StopAtStepHook(last_step = 1000 * (i + 1))]
+        hooks=[tf.train.StopAtStepHook(last_step = 925 * (i + 1))]
         with tf.train.MonitoredTrainingSession(master = server.target, is_chief=(self.task_index == 0), checkpoint_dir= os.path.expanduser('~/sentiment/logs/'), hooks = hooks) as sess:
           step_count = 0
 
